@@ -1,5 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
+import Rooms from "./pages/Rooms";
+import Bookings from "./pages/Bookings";
+import Users from "./pages/Users";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Login from "./pages/Login";
 
 function App() {
   return (
