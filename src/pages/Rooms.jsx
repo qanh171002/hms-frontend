@@ -25,6 +25,7 @@ const statusColors = {
 
 function Rooms() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFloor, setSelectedFloor] = useState("");
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,6 +61,14 @@ function Rooms() {
     }
   };
 
+  const handleFloorChange = (e) => {
+    setSelectedFloor(e.target.value);
+  };
+
+  const filteredRooms = selectedFloor
+    ? rooms.filter((room) => room.location.startsWith(selectedFloor))
+    : rooms;
+
   return (
     <div className="grid grid-cols-5 gap-6">
       <div className="col-span-2 mb-6 flex flex-col justify-center">
@@ -69,7 +78,11 @@ function Rooms() {
         </p>
       </div>
       <div className="col-span-3 mb-6 flex items-center justify-end gap-4">
-        <select className="rounded-md border border-gray-500 px-3 py-2 text-sm">
+        <select
+          className="rounded-md border border-gray-500 px-3 py-2 text-sm"
+          value={selectedFloor}
+          onChange={handleFloorChange}
+        >
           <option value="">All floors</option>
           <option value="1">1st floor</option>
           <option value="2">2nd floor</option>
@@ -83,7 +96,7 @@ function Rooms() {
           <div className="flex h-40 items-center justify-center">
             <Spinner />
           </div>
-        ) : rooms.length === 0 ? (
+        ) : filteredRooms.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
             <FaBed className="mb-2 text-6xl text-gray-400" />
             <div className="text-lg font-semibold text-gray-400">
@@ -93,7 +106,7 @@ function Rooms() {
         ) : (
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {rooms.map((room) => (
+              {filteredRooms.map((room) => (
                 <RoomCard key={room.id} room={room} />
               ))}
             </div>

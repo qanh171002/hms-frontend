@@ -19,6 +19,7 @@ import Sidebar from "./components/Sidebar";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RoomDetail from "./pages/RoomDetail";
 
 function AppLayout() {
   return (
@@ -53,6 +54,7 @@ function App() {
               <Route index element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/rooms" element={<Rooms />} />
+              <Route path="/rooms/:id" element={<RoomDetail />} />
               <Route path="/bookings" element={<Bookings />} />
               <Route path="/users" element={<Users />} />
               <Route path="/profile" element={<Profile />} />
