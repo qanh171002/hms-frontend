@@ -4,7 +4,7 @@ function Modal({ isOpen, onClose, children }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
       {/* Modal content */}
       <div className="relative z-50 w-full max-w-md px-8 pt-6 pb-8 mx-auto bg-white rounded-lg shadow-xl">
