@@ -16,6 +16,9 @@ import Assets from "./pages/Assets";
 import Invoices from "./pages/Invoices";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function AppLayout() {
   return (
@@ -35,23 +38,34 @@ function AppLayout() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route index element={<Navigate to="/dashboard" />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/rooms" element={<Rooms />} />
-          <Route path="/bookings" element={<Bookings />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/assets" element={<Assets />} />
-          <Route path="/invoices" element={<Invoices />} />
-        </Route>
+    <>
+      <Toaster />
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route
+              element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/dashboard" />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/rooms" element={<Rooms />} />
+              <Route path="/bookings" element={<Bookings />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/assets" element={<Assets />} />
+              <Route path="/invoices" element={<Invoices />} />
+            </Route>
 
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </>
   );
 }
 
