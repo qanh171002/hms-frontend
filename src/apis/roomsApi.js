@@ -10,3 +10,13 @@ export const getRooms = async () => {
     throw error;
   }
 };
+
+export const createRoom = async (room) => {
+  try {
+    const res = await apiClient.post("/rooms", room);
+    return res.data;
+  } catch (error) {
+    console.log("Error creating room:", error);
+    throw error;
+  }
+};

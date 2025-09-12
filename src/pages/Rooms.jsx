@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { getRooms } from "../apis/roomsApi";
+import { createRoom, getRooms } from "../apis/roomsApi";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import { FaUserFriends, FaBed } from "react-icons/fa";
 import Spinner from "../components/Spinner";
+import toast from "react-hot-toast";
+import Modal from "../components/Modal";
+import AddRoomForm from "../components/AddRoomForm";
 
 const statusColors = {
   Available: {
@@ -21,8 +24,10 @@ const statusColors = {
 };
 
 function Rooms() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -40,21 +45,38 @@ function Rooms() {
     fetchRooms();
   }, []);
 
+  const handleAddRoom = async (newRoom) => {
+    try {
+      setIsSubmitting(true);
+      const createdRoom = await createRoom(newRoom);
+      setRooms((prevRooms) => [...prevRooms, createdRoom]);
+      setIsModalOpen(false);
+      toast.success("Room added successfully!");
+    } catch (err) {
+      toast.error("Failed to add room!");
+      console.log(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="grid grid-cols-5 gap-6">
-      <div className="col-span-2">
-        <h2>List of Rooms</h2>
-        <p>Here is the list of your hotel rooms.</p>
+      <div className="col-span-2 mb-6 flex flex-col justify-center">
+        <h2 className="text-2xl font-bold text-gray-800">List of Rooms</h2>
+        <p className="text-base text-gray-500">
+          Here is the list of your hotel rooms.
+        </p>
       </div>
-      <div className="col-span-3">
-        <select>
+      <div className="col-span-3 mb-6 flex items-center justify-end gap-4">
+        <select className="rounded-md border border-gray-500 px-3 py-2 text-sm">
           <option value="">All floors</option>
           <option value="1">1st floor</option>
           <option value="2">2nd floor</option>
           <option value="3">3rd floor</option>
           <option value="4">4th floor</option>
         </select>
-        <Button>Add room</Button>
+        <Button onClick={() => setIsModalOpen(true)}>Add room</Button>
       </div>
       <div className="col-span-5 rounded-2xl bg-white p-6">
         {isLoading ? (
@@ -83,6 +105,13 @@ function Rooms() {
           </>
         )}
       </div>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <AddRoomForm
+          onSubmit={handleAddRoom}
+          onClose={() => setIsModalOpen(false)}
+          isSubmitting={isSubmitting}
+        />
+      </Modal>
     </div>
   );
 }
