@@ -6,9 +6,16 @@ import {
 } from "react-icons/hi2";
 import ButtonIcon from "./ButtonIcon";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 function HeaderMenu() {
   const navigate = useNavigate();
+  const { logoutUser } = useAuth();
+
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/login", { replace: true });
+  };
   return (
     <ul className="flex gap-1">
       <li>
@@ -27,11 +34,7 @@ function HeaderMenu() {
         </ButtonIcon>
       </li>
       <li>
-        <ButtonIcon
-          onClick={() => {
-            navigate("/login", { replace: true });
-          }}
-        >
+        <ButtonIcon onClick={handleLogout}>
           <HiArrowRightOnRectangle className="text-2xl text-gray-700" />
         </ButtonIcon>
       </li>
