@@ -56,7 +56,9 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
   };
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Create new room</h2>
+      <h2 className="mb-6 text-xl font-semibold text-gray-800">
+        Create new room
+      </h2>
       <div className="grid grid-cols-2 gap-8">
         {/* Left Column */}
         <div className="space-y-6">
