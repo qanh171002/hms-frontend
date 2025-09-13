@@ -37,17 +37,12 @@ function Profile() {
       return;
     }
 
-    if (!profileForm.email.trim()) {
-      toast.error("Please enter your email");
-      return;
-    }
-
     try {
       setUpdating(true);
       const updateData = {
         id: user.id,
         fullName: profileForm.fullName,
-        email: profileForm.email,
+        email: user.email,
         phoneNumber: profileForm.phoneNumber,
         roles: user.roles,
         password: profileForm.password || undefined,
@@ -66,13 +61,6 @@ function Profile() {
       console.error("Error updating profile:", error);
     } finally {
       setUpdating(false);
-    }
-  };
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      toast.info("Avatar upload feature will be supported soon");
     }
   };
 
@@ -152,13 +140,14 @@ function Profile() {
             <div className="md:col-span-2">
               <input
                 type="email"
-                value={profileForm.email}
-                onChange={(e) =>
-                  setProfileForm({ ...profileForm, email: e.target.value })
-                }
-                className="w-1/2 rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                value={user.email}
+                disabled
+                className="w-1/2 cursor-not-allowed rounded-md border border-gray-300 bg-gray-200 px-3 py-2 text-gray-500"
                 required
               />
+              <p className="mt-1 text-xs text-gray-500">
+                Email cannot be changed
+              </p>
             </div>
           </div>
 
@@ -221,28 +210,6 @@ function Profile() {
                     <HiEye className="h-5 w-5" />
                   )}
                 </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
-            <label className="font-medium text-gray-600">Avatar image</label>
-            <div className="md:col-span-2">
-              <div className="flex items-center space-x-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  className="hidden"
-                  id="avatar-upload"
-                />
-                <label
-                  htmlFor="avatar-upload"
-                  className="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
-                >
-                  Choose file
-                </label>
-                <span className="text-gray-500">No file chosen</span>
               </div>
             </div>
           </div>

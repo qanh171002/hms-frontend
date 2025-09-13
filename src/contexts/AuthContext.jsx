@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const response = await login(credentials);
       if (!response?.token) {
-        throw new Error("No token received from server");
+        throw new Error("Login failed!");
       }
 
       try {
