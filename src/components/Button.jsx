@@ -4,6 +4,7 @@ function Button({
   children,
   onClick,
   className,
+  ...props
 }) {
   const baseStyles =
     "rounded-md transition duration-200 ease-in-out focus:outline-none";
@@ -28,6 +29,7 @@ function Button({
     <button
       onClick={onClick}
       className={`${baseStyles} ${currentVariation} ${currentSize} ${className}`}
+      {...props}
     >
       {children}
     </button>
