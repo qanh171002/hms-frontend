@@ -142,13 +142,13 @@ function Profile() {
       </div>
 
       <div className="mb-8 rounded-lg bg-white p-8 shadow-lg">
-        <h2 className="mb-8 text-2xl font-bold text-gray-800">
+        <h2 className="mb-8 text-2xl font-bold text-gray-600">
           Update user data
         </h2>
 
         <form onSubmit={handleProfileUpdate} className="space-y-6">
           <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
-            <label className="font-medium text-gray-700">Email address</label>
+            <label className="font-medium text-gray-600">Email address</label>
             <div className="md:col-span-2">
               <input
                 type="email"
@@ -163,7 +163,7 @@ function Profile() {
           </div>
 
           <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
-            <label className="font-medium text-gray-700">Full name</label>
+            <label className="font-medium text-gray-600">Full name</label>
             <div className="md:col-span-2">
               <input
                 type="text"
@@ -178,7 +178,7 @@ function Profile() {
           </div>
 
           <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
-            <label className="font-medium text-gray-700">Phone number</label>
+            <label className="font-medium text-gray-600">Phone number</label>
             <div className="md:col-span-2">
               <input
                 type="tel"
@@ -195,7 +195,7 @@ function Profile() {
           </div>
 
           <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
-            <label className="font-medium text-gray-700">
+            <label className="font-medium text-gray-600">
               New password (leave blank if you don't want to change)
             </label>
             <div className="md:col-span-2">
@@ -226,7 +226,7 @@ function Profile() {
           </div>
 
           <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3">
-            <label className="font-medium text-gray-700">Avatar image</label>
+            <label className="font-medium text-gray-600">Avatar image</label>
             <div className="md:col-span-2">
               <div className="flex items-center space-x-4">
                 <input
