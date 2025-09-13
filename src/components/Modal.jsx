@@ -7,13 +7,13 @@ function Modal({ isOpen, onClose, children }) {
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
       {/* Modal content */}
-      <div className="relative z-50 w-full max-w-md px-8 pt-6 pb-8 mx-auto bg-white rounded-lg shadow-xl">
+      <div className="relative z-50 mx-auto w-full max-w-md rounded-lg bg-white px-8 pt-6 pb-8 shadow-xl">
         <button
           onClick={onClose}
-          className="absolute text-gray-400 right-4 top-4 hover:text-gray-500"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
         >
           <svg
-            className="w-6 h-6"
+            className="h-6 w-6"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

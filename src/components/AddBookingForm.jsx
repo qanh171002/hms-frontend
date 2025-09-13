@@ -1,6 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Button from "./Button";
+import SpinnerMini from "./SpinnerMini";
 
 function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
   const [formData, setFormData] = useState({
@@ -83,13 +84,14 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
   };
 
   return (
-    <div className="w-full max-w-lg">
-      <h2 className="mb-6 text-2xl font-bold text-gray-800">Add New Booking</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Thông tin khách */}
+    <form onSubmit={handleSubmit}>
+      <h2 className="mb-6 text-xl font-semibold text-gray-800">
+        Add New Booking
+      </h2>
+      <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Guest Full Name *
             </label>
             <input
@@ -103,7 +105,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
             />
           </div>
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               ID Number *
             </label>
             <input
@@ -120,7 +122,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Nationality
             </label>
             <input
@@ -133,7 +135,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
             />
           </div>
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Room Number *
             </label>
             <input
@@ -149,11 +151,10 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
           </div>
         </div>
 
-        {/* Đưa Booking Type lên trước thời gian */}
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label
-              className="block mb-2 text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis"
+              className="mb-2 block overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-gray-700"
               title="Booking Type"
             >
               Booking Type *
@@ -173,7 +174,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
 
           <div>
             <label
-              className="block mb-2 text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis"
+              className="mb-2 block overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-gray-700"
               title="Status"
             >
               Status *
@@ -195,7 +196,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
 
           <div>
             <label
-              className="block mb-2 text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis"
+              className="mb-2 block overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-gray-700"
               title="Number of Guests"
             >
               Number of Guests *
@@ -213,10 +214,9 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
           </div>
         </div>
 
-        {/* Thời gian: Hourly = datetime-local, Daily = date */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               {isHourly ? "Check-in DateTime *" : "Check-in Date *"}
             </label>
             <input
@@ -230,7 +230,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
             />
           </div>
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               {isHourly ? "Check-out DateTime *" : "Check-out Date *"}
             </label>
             <input
@@ -248,7 +248,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
         {isHourly && (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 Actual Check-in Time
               </label>
               <input
@@ -261,7 +261,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 Actual Check-out Time
               </label>
               <input
@@ -277,7 +277,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
         )}
 
         <div>
-          <label className="block mb-2 text-sm font-medium text-gray-700">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Notes
           </label>
           <textarea
@@ -291,7 +291,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
         </div>
 
         <div>
-          <label className="block mb-2 text-sm font-medium text-gray-700">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Cancel Reason
           </label>
           <textarea
@@ -303,22 +303,16 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
             disabled={isSubmitting}
           />
         </div>
-
-        <div className="flex gap-4 pt-4">
-          <Button
-            type="button"
-            onClick={onClose}
-            className="flex-1 bg-gray-500 hover:bg-gray-600"
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting} className="flex-1">
-            {isSubmitting ? "Adding..." : "Add booking"}
-          </Button>
-        </div>
-      </form>
-    </div>
+      </div>
+      <div className="mt-6 flex justify-end gap-3 border-t pt-6">
+        <Button variation="secondary" onClick={onClose} disabled={isSubmitting}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? <SpinnerMini /> : "Add booking"}
+        </Button>
+      </div>
+    </form>
   );
 }
 
