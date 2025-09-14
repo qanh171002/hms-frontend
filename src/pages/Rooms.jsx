@@ -72,9 +72,9 @@ function Rooms() {
   return (
     <div className="grid grid-cols-5 gap-6">
       <div className="col-span-2 mb-6 flex flex-col justify-center">
-        <h2 className="text-2xl font-bold text-gray-800">List of Rooms</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Room Management</h2>
         <p className="text-base text-gray-500">
-          Here is the list of your hotel rooms.
+          Manage and monitor hotel room status.
         </p>
       </div>
       <div className="col-span-3 mb-6 flex items-center justify-end gap-4">
@@ -166,7 +166,7 @@ function RoomCard({ room }) {
         </div>
       </div>
       {displayPrice && (
-        <div className="absolute bottom-6 right-6 text-2xl font-bold text-white">
+        <div className="absolute right-6 bottom-6 text-2xl font-bold text-white">
           ${displayPrice.basePrice}
           <span className="text-base font-semibold text-gray-200">
             /{priceType}

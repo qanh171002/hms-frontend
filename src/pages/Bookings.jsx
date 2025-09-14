@@ -75,7 +75,7 @@ function Bookings() {
       try {
         await deleteBooking(id);
         setBookings((prevBookings) =>
-          prevBookings.filter((booking) => booking.id !== id)
+          prevBookings.filter((booking) => booking.id !== id),
         );
         toast.success("Booking deleted successfully!");
       } catch (err) {
@@ -127,9 +127,11 @@ function Bookings() {
     <>
       <div className="mb-8 flex flex-col items-center justify-between sm:flex-row">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">List of Bookings</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Booking Management
+          </h2>
           <p className="text-base text-gray-500">
-            Here is the list of bookings.
+            Track and manage all hotel reservations.
           </p>
         </div>
         <div className="mt-4 flex items-center gap-2 sm:mt-0">
@@ -175,28 +177,28 @@ function Bookings() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Booking ID
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Guest Name
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Room Number
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Check-in/Check-out
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Guests
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Type
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500"></th>
+                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
@@ -221,10 +223,10 @@ function Bookings() {
               ) : (
                 pageBookings.map((booking) => (
                   <tr key={booking.id}>
-                    <td className="whitespace-nowrap px-6 py-4 text-base font-medium text-gray-900 ">
+                    <td className="px-6 py-4 text-base font-medium whitespace-nowrap text-gray-900">
                       <div className="font-semibold">#{booking.id}</div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-base font-medium text-gray-900 ">
+                    <td className="px-6 py-4 text-base font-medium whitespace-nowrap text-gray-900">
                       <div className="font-semibold">
                         {booking.guestFullName}
                       </div>
@@ -232,18 +234,18 @@ function Bookings() {
                         {booking.guestNationality}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-base font-semibold text-gray-800 ">
+                    <td className="px-6 py-4 text-base font-semibold whitespace-nowrap text-gray-800">
                       {booking.roomNumber}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-base text-gray-800 ">
-                      {booking.bookingType === "Hourly" ? (
+                    <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
+                      {booking.bookingType?.toUpperCase() === "HOURLY" ? (
                         <div className="space-y-1">
                           <div className="text-sm">
                             <span className="mr-1 font-semibold">In:</span>
                             <span className="rounded-md bg-gray-100 px-2 py-0.5">
                               {formatDateTimeByType(
                                 booking.checkInDate,
-                                "Hourly"
+                                "Hourly",
                               )}
                             </span>
                           </div>
@@ -252,7 +254,7 @@ function Bookings() {
                             <span className="rounded-md bg-gray-100 px-2 py-0.5">
                               {formatDateTimeByType(
                                 booking.checkOutDate,
-                                "Hourly"
+                                "Hourly",
                               )}
                             </span>
                           </div>
@@ -264,7 +266,7 @@ function Bookings() {
                             <span>
                               {formatDateTimeByType(
                                 booking.checkInDate,
-                                "Daily"
+                                "Daily",
                               )}
                             </span>
                           </div>
@@ -273,29 +275,30 @@ function Bookings() {
                             <span>
                               {formatDateTimeByType(
                                 booking.checkOutDate,
-                                "Daily"
+                                "Daily",
                               )}
                             </span>
                           </div>
                         </div>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-base text-gray-800 ">
+                    <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
                       {booking.numberOfGuests}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-base text-gray-800 ">
-                      {booking.bookingType}
+                    <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
+                      {booking.bookingType?.charAt(0).toUpperCase() +
+                        booking.bookingType?.slice(1).toLowerCase()}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-base font-semibold leading-5 ${
+                        className={`inline-flex rounded-full px-3 py-1 text-base leading-5 font-semibold ${
                           statusStyles[booking.status]
                         }`}
                       >
                         {booking.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                    <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           className="rounded-full p-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700"

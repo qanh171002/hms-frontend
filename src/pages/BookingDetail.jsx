@@ -191,7 +191,7 @@ function BookingDetail() {
 
     if (
       window.confirm(
-        "Are you sure you want to delete this booking? This action cannot be undone."
+        "Are you sure you want to delete this booking? This action cannot be undone.",
       )
     ) {
       try {
@@ -210,7 +210,7 @@ function BookingDetail() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-40">
+      <div className="flex h-40 items-center justify-center">
         <Spinner />
       </div>
     );
@@ -218,7 +218,7 @@ function BookingDetail() {
 
   if (!booking) {
     return (
-      <div className="flex justify-center items-center h-40">
+      <div className="flex h-40 items-center justify-center">
         <div className="text-lg text-gray-600">Booking not found</div>
       </div>
     );
@@ -230,14 +230,14 @@ function BookingDetail() {
     : "";
 
   return (
-    <div className="py-8 w-full">
-      <div className="flex justify-between items-center mb-6">
+    <div className="w-full py-8">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">
             Booking <span className="text-blue-500">#{booking.id}</span>
           </h1>
           <span
-            className={`uppercase text-xs font-semibold px-3 py-1 rounded-full ${
+            className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${
               statusStyles[booking.status] || statusStyles.Unconfirmed
             }`}
           >
@@ -247,7 +247,7 @@ function BookingDetail() {
 
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold text-lg"
+          className="flex items-center gap-2 text-lg font-semibold text-blue-600 hover:text-blue-800"
         >
           <HiOutlineArrowLeft />
           Back
@@ -255,13 +255,16 @@ function BookingDetail() {
       </div>
 
       {/* Card */}
-      <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow">
         {/* Purple bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-6 bg-blue-500 text-blue-100">
+        <div className="flex flex-col justify-between gap-3 bg-blue-500 p-6 text-blue-100 md:flex-row md:items-center">
           <div className="flex items-center gap-2">
             <HiOutlineHome className="text-3xl" />
             <span className="text-lg font-semibold">
-              {nights} {booking.bookingType === "Hourly" ? "hours" : "nights"}{" "}
+              {nights}{" "}
+              {booking.bookingType?.toUpperCase() === "HOURLY"
+                ? "hours"
+                : "nights"}{" "}
               in Cabin {booking.roomNumber ?? "N/A"}
             </span>
           </div>
@@ -269,16 +272,16 @@ function BookingDetail() {
           <div className="text-lg font-medium">
             {booking.checkInDate && booking.checkOutDate ? (
               <>
-                {booking.bookingType === "Hourly"
+                {booking.bookingType?.toUpperCase() === "HOURLY"
                   ? `${formatWeekdayDateTime(
-                      booking.checkInDate
+                      booking.checkInDate,
                     )} (${relative}) — ${formatWeekdayDateTime(
-                      booking.checkOutDate
+                      booking.checkOutDate,
                     )}`
                   : `${formatWeekdayDate(
-                      booking.checkInDate
+                      booking.checkInDate,
                     )} (${relative}) — ${formatWeekdayDate(
-                      booking.checkOutDate
+                      booking.checkOutDate,
                     )}`}
               </>
             ) : (
@@ -288,10 +291,10 @@ function BookingDetail() {
         </div>
 
         {/* Body list */}
-        <div className="px-6 py-5 space-y-6">
+        <div className="space-y-6 px-6 py-5">
           {/* Guest line */}
-          <div className="flex items-center gap-3 text-gray-800 ">
-            <span className="w-6 h-6 grid place-items-center rounded-full bg-red-100 text-red-500 text-xs">
+          <div className="flex items-center gap-3 text-gray-800">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-red-100 text-xs text-red-500">
               ●
             </span>
             <span className="font-semibold">{booking.guestFullName}</span>
@@ -311,21 +314,24 @@ function BookingDetail() {
 
           {/* Room number */}
           <div className="flex items-center gap-3 text-gray-800">
-            <HiOutlineHome className="text-blue-500 text-xl" />
+            <HiOutlineHome className="text-xl text-blue-500" />
             <span className="font-medium">Room number</span>
             <span className="text-gray-700">{booking.roomNumber ?? "—"}</span>
           </div>
 
           {/* Booking type */}
           <div className="flex items-center gap-3 text-gray-800">
-            <HiOutlineCalendar className="text-blue-500 text-xl" />
+            <HiOutlineCalendar className="text-xl text-blue-500" />
             <span className="font-medium">Booking type</span>
-            <span className="text-gray-700">{booking.bookingType}</span>
+            <span className="text-gray-700">
+              {booking.bookingType?.charAt(0).toUpperCase() +
+                booking.bookingType?.slice(1).toLowerCase()}
+            </span>
           </div>
 
           {/* Number of guests */}
           <div className="flex items-center gap-3 text-gray-800">
-            <HiOutlineUser className="text-blue-500 text-xl" />
+            <HiOutlineUser className="text-xl text-blue-500" />
             <span className="font-medium">Number of guests</span>
             <span className="text-gray-700">{booking.numberOfGuests}</span>
           </div>
@@ -333,7 +339,7 @@ function BookingDetail() {
           {/* Notes (optional) */}
           {booking.notes && booking.notes.trim() !== "" && (
             <div className="flex items-center gap-3 text-gray-800">
-              <HiOutlineChatBubbleLeftRight className="text-blue-500 text-xl" />
+              <HiOutlineChatBubbleLeftRight className="text-xl text-blue-500" />
               <span className="font-medium">Notes</span>
               <span className="text-gray-700">{booking.notes}</span>
             </div>
@@ -342,7 +348,7 @@ function BookingDetail() {
           {/* Cancel reason (optional) */}
           {booking.cancelReason && booking.cancelReason.trim() !== "" && (
             <div className="flex items-center gap-3 text-gray-800">
-              <HiOutlineChatBubbleLeftRight className="text-blue-500 text-xl" />
+              <HiOutlineChatBubbleLeftRight className="text-xl text-blue-500" />
               <span className="font-medium">Cancel reason</span>
               <span className="text-gray-700">{booking.cancelReason}</span>
             </div>
@@ -350,7 +356,7 @@ function BookingDetail() {
 
           {/* Total price banner */}
           <div className="mt-4">
-            <div className="flex items-center justify-between px-5 py-4 rounded-lg bg-yellow-50 border border-yellow-100">
+            <div className="flex items-center justify-between rounded-lg border border-yellow-100 bg-yellow-50 px-5 py-4">
               <div className="flex items-center gap-2 text-yellow-800">
                 <HiOutlineCurrencyDollar className="text-2xl" />
                 <span className="font-semibold">Total price</span>
@@ -359,7 +365,7 @@ function BookingDetail() {
                 <span className="text-2xl font-bold text-yellow-900">
                   $0.00
                 </span>
-                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+                <span className="rounded-full border border-yellow-200 bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800">
                   WILL PAY AT PROPERTY
                 </span>
               </div>
@@ -376,7 +382,7 @@ function BookingDetail() {
       </div>
 
       {/* Actions */}
-      <div className="flex flex-wrap gap-4 justify-end mt-8">
+      <div className="mt-8 flex flex-wrap justify-end gap-4">
         {booking.status === "Unconfirmed" && (
           <Button size="medium" onClick={handleCheckIn} disabled={isUpdating}>
             {isUpdating ? "Processing..." : "Check in"}

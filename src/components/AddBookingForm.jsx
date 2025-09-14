@@ -66,7 +66,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
         isHourly && formData.actualCheckOutTime
           ? toISODateTime(formData.actualCheckOutTime)
           : "",
-      bookingType: formData.bookingType,
+      bookingType: formData.bookingType.toUpperCase(),
       status: formData.status,
       numberOfGuests: parseInt(formData.numberOfGuests),
       notes: formData.notes.trim(),
