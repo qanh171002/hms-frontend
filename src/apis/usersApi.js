@@ -12,7 +12,7 @@ export const getCurrentUser = async () => {
 
 export const updateUserProfile = async (id, userData) => {
   try {
-    const response = await axios.put(`/users/${id}/profile`, userData);
+    const response = await axios.put(`/users/${id}`, userData);
     return response.data;
   } catch (error) {
     console.error("Error updating user profile:", error);
