@@ -11,11 +11,11 @@ import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   return (
-    <aside className="flex relative z-10 flex-col w-64 h-full bg-white">
+    <aside className="relative z-10 flex h-full w-72 flex-col bg-white">
       <div className="flex items-center justify-center p-4">
         <h1 className="text-2xl font-bold text-blue-500">Hotelio</h1>
       </div>
-      <nav className="flex flex-col p-4">
+      <nav className="flex flex-col px-6 py-8">
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
