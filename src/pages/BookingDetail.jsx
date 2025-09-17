@@ -13,6 +13,7 @@ import {
   updateBooking,
   deleteBooking,
 } from "../apis/bookingsApi";
+import { createInvoice } from "../apis/invoicesApi";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
@@ -177,7 +178,21 @@ function BookingDetail() {
 
       await updateBooking(booking.id, updatedBooking);
       setBooking(updatedBooking);
-      toast.success("Check-out successful!");
+
+      const invoiceData = {
+        bookingId: booking.id,
+        amount: 0,
+        paidAmount: 0,
+        status: "Pending",
+        issuedDate: now,
+        dueDate: "",
+        paymentMethod: "",
+        notes: "",
+      };
+      const createdInvoice = await createInvoice(invoiceData);
+      toast.success(
+        `Check-out successful! Invoice #${createdInvoice.id} created!`,
+      );
     } catch (err) {
       toast.error("Failed to check out!");
       console.error(err);
