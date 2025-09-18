@@ -24,12 +24,12 @@ import BookingDetail from "./pages/BookingDetail";
 
 function AppLayout() {
   return (
-    <div className="flex overflow-hidden h-screen">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex overflow-auto flex-col flex-1 bg-gray-50">
+      <div className="flex flex-1 flex-col overflow-auto bg-gray-50">
         <Header />
-        <main className="overflow-scroll p-8 no-scrollbar">
-          <div className="flex flex-col gap-8 p-8 mx-auto max-w-10xl">
+        <main className="no-scrollbar overflow-scroll p-8">
+          <div className="max-w-10xl mx-auto flex flex-col gap-8 px-28 py-8">
             <Outlet />
           </div>
         </main>
