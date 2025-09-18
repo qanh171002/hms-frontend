@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import Modal from "../components/Modal";
 import EditRoomForm from "../components/EditRoomForm";
+import Button from "../components/Button";
 import { deleteRoom, getRoomById } from "../apis/roomsApi";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
@@ -42,7 +43,7 @@ export default function RoomDetail() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-40">
+      <div className="flex h-40 items-center justify-center">
         <Spinner />
       </div>
     );
@@ -50,7 +51,7 @@ export default function RoomDetail() {
 
   if (!roomData) {
     return (
-      <div className="flex justify-center items-center h-40">
+      <div className="flex h-40 items-center justify-center">
         <div className="text-lg text-gray-600">Room not found</div>
       </div>
     );
@@ -71,12 +72,12 @@ export default function RoomDetail() {
     ? String(roomData.roomNumber).padStart(3, "0")
     : roomData.roomNumber;
 
-  const statusColor =
-    roomData.status === "Available"
-      ? "bg-blue-100 text-blue-500"
-      : roomData.status === "Reserved"
-      ? "bg-green-100 text-green-500"
-      : "bg-red-100 text-red-500";
+  // const statusColor =
+  //   roomData.status === "Available"
+  //     ? "bg-blue-100 text-blue-500"
+  //     : roomData.status === "Reserved"
+  //     ? "bg-green-100 text-green-500"
+  //     : "bg-red-100 text-red-500";
 
   const handleEditRoom = (updatedRoom) => {
     setRoomData(updatedRoom);
@@ -96,37 +97,37 @@ export default function RoomDetail() {
 
   return (
     <div className="grid grid-cols-5 gap-6">
-      <div className="flex flex-col col-span-2 justify-center mb-6">
+      <div className="col-span-2 mb-6 flex flex-col justify-center">
         <h2 className="text-2xl font-bold text-gray-800">Room detail</h2>
-        <p className="text-gray-500 text-md">
+        <p className="text-md text-gray-500">
           Here is the detail of your hotel room.
         </p>
       </div>
 
-      <div className="flex col-span-3 gap-4 justify-end items-center mb-6"></div>
-      <div className="col-span-5 p-6 bg-white rounded-2xl">
+      <div className="col-span-3 mb-6 flex items-center justify-end gap-4"></div>
+      <div className="col-span-5 rounded-2xl bg-white p-6">
         <div className="grid grid-cols-12 gap-8">
-          <div className="flex col-span-7 justify-center items-center">
+          <div className="col-span-7 flex items-center justify-center">
             <img
               src={demoImage}
               alt="Room"
               className="h-[420px] w-full max-w-full rounded-2xl object-cover shadow-lg"
             />
           </div>
-          <div className="flex flex-col col-span-5 gap-8 justify-center px-4 h-full">
-            <div className="flex gap-4 items-center mb-2">
+          <div className="col-span-5 flex h-full flex-col justify-center gap-8 px-4">
+            <div className="mb-2 flex items-center gap-4">
               <h2 className="text-3xl font-bold text-gray-800">
                 Room #{roomNumberFormatted}
               </h2>
-              <span
+              {/* <span
                 className={`px-4 py-2 text-base font-semibold rounded-full ${statusColor}`}
               >
                 {roomData.status}
-              </span>
+              </span> */}
             </div>
             <div className="space-y-6 text-xl">
               {hourlyPrice && (
-                <div className="flex gap-3 items-center text-gray-700">
+                <div className="flex items-center gap-3 text-gray-700">
                   <FaDollarSign className="text-2xl text-blue-500" />
                   <span className="font-semibold">
                     ${hourlyPrice.basePrice} per hour
@@ -134,44 +135,47 @@ export default function RoomDetail() {
                 </div>
               )}
               {dailyPrice && (
-                <div className="flex gap-3 items-center text-gray-700">
+                <div className="flex items-center gap-3 text-gray-700">
                   <FaDollarSign className="text-2xl text-blue-500" />
                   <span className="font-semibold">
                     ${dailyPrice.basePrice} per day
                   </span>
                 </div>
               )}
-              <div className="flex gap-3 items-center text-gray-700">
+              <div className="flex items-center gap-3 text-gray-700">
                 <FaBed className="text-2xl text-blue-500" />
                 <span className="font-semibold">{roomData.roomType}</span>
               </div>
-              <div className="flex gap-3 items-center text-gray-700">
+              <div className="flex items-center gap-3 text-gray-700">
                 <FaUserFriends className="text-2xl text-blue-500" />
                 <span className="font-semibold">{capacityFormatted}</span>
               </div>
             </div>
-            <div className="flex gap-4 items-center mt-10">
-              <button
+            <div className="mt-10 flex items-center gap-4">
+              <Button
                 onClick={() => navigate(-1)}
-                className="flex gap-2 items-center px-7 py-3 text-lg font-semibold text-gray-700 rounded-md border border-gray-300 transition duration-200 ease-in-out hover:bg-gray-100"
+                variation="tertiary"
+                className="flex items-center gap-2 px-7 py-3 text-lg font-semibold"
               >
                 <FaArrowLeft />
                 Back
-              </button>
-              <button
-                className="flex gap-2 items-center px-7 py-3 text-lg font-semibold text-white bg-blue-500 rounded-md transition duration-200 ease-in-out hover:bg-blue-600"
+              </Button>
+              <Button
                 onClick={() => setIsEditOpen(true)}
+                variation="primary"
+                className="flex items-center gap-2 px-7 py-3 text-lg font-semibold"
               >
                 <FaEdit />
                 Edit
-              </button>
-              <button
-                className="flex gap-2 items-center px-7 py-3 text-lg font-semibold text-white bg-red-500 rounded-md transition duration-200 ease-in-out text-md hover:bg-red-600"
+              </Button>
+              <Button
                 onClick={handleDeleteRoom}
+                variation="danger"
+                className="flex items-center gap-2 px-7 py-3 text-lg font-semibold"
               >
                 <FaTrash />
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
         </div>

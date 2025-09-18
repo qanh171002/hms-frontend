@@ -62,6 +62,7 @@ function Bookings() {
       setBookings((prevBookings) => [...prevBookings, createdBooking]);
       setIsModalOpen(false);
       toast.success("Booking added successfully!");
+      return createdBooking;
     } catch (err) {
       console.error("Error in handleAddBooking:", err);
       toast.error(err.message || "Failed to add booking!");

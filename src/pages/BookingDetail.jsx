@@ -14,6 +14,7 @@ import {
   deleteBooking,
 } from "../apis/bookingsApi";
 import { createInvoice } from "../apis/invoicesApi";
+import { updateRoom } from "../apis/roomsApi";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
@@ -155,7 +156,14 @@ function BookingDetail() {
 
       await updateBooking(booking.id, updatedBooking);
       setBooking(updatedBooking);
-      toast.success("Check-in successful!");
+
+      const roomId = booking.roomId;
+      if (roomId) {
+        await updateRoom(roomId, { status: "Booked" });
+        toast.success("Check-in successful! Room status updated to Booked");
+      } else {
+        toast.success("Check-in successful!");
+      }
     } catch (err) {
       toast.error("Failed to check in!");
       console.error(err);
@@ -179,6 +187,11 @@ function BookingDetail() {
       await updateBooking(booking.id, updatedBooking);
       setBooking(updatedBooking);
 
+      const roomId = booking.roomId;
+      if (roomId) {
+        await updateRoom(roomId, { status: "Available" });
+      }
+
       const invoiceData = {
         bookingId: booking.id,
         amount: 0,
@@ -190,9 +203,16 @@ function BookingDetail() {
         notes: "",
       };
       const createdInvoice = await createInvoice(invoiceData);
-      toast.success(
-        `Check-out successful! Invoice #${createdInvoice.id} created!`,
-      );
+
+      if (roomId) {
+        toast.success(
+          `Check-out successful! Invoice #${createdInvoice.id} created!`,
+        );
+      } else {
+        toast.success(
+          `Check-out successful! Invoice #${createdInvoice.id} created!`,
+        );
+      }
     } catch (err) {
       toast.error("Failed to check out!");
       console.error(err);
@@ -212,7 +232,17 @@ function BookingDetail() {
       try {
         setIsUpdating(true);
         await deleteBooking(booking.id);
-        toast.success("Booking deleted successfully!");
+
+        const roomId = booking.roomId;
+        if (roomId) {
+          await updateRoom(roomId, { status: "Available" });
+          toast.success(
+            "Booking deleted successfully! Room status updated to Available",
+          );
+        } else {
+          toast.success("Booking deleted successfully!");
+        }
+
         navigate("/bookings");
       } catch (err) {
         toast.error("Failed to delete booking!");

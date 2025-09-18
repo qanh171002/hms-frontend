@@ -63,7 +63,7 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
         {/* Left Column */}
         <div className="space-y-6">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Room number
             </label>
             <input
@@ -79,7 +79,7 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Room type
             </label>
             <select
@@ -91,14 +91,15 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
               disabled={isSubmitting}
             >
               <option value="">Choose room type</option>
-              <option value="Single bed">Single bed</option>
-              <option value="Double bed">Double bed</option>
-              <option value="Twin beds">Twin beds</option>
+              <option value="Standard">Standard</option>
+              <option value="Deluxe">Deluxe</option>
+              <option value="Suite">Suite</option>
+              <option value="Executive">Executive</option>
             </select>
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Max occupancy
             </label>
             <select
@@ -120,7 +121,7 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
         {/* Right Column */}
         <div className="space-y-6">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Location
             </label>
             <select
@@ -141,7 +142,7 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Daily price
             </label>
             <input
@@ -158,7 +159,7 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Hourly price (optional)
             </label>
             <input
@@ -174,7 +175,7 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
           </div>
         </div>
       </div>
-      <div className="flex gap-3 justify-end pt-6 mt-6 border-t">
+      <div className="mt-6 flex justify-end gap-3 border-t pt-6">
         <Button variation="secondary" onClick={onClose} disabled={isSubmitting}>
           Cancel
         </Button>

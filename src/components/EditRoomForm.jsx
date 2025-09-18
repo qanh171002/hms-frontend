@@ -11,7 +11,7 @@ function EditRoomForm({ room, onSubmit, onClose }) {
     roomNumber: room.roomNumber || "",
     maxOccupancy: room.maxOccupancy || "",
     roomType: room.roomType || "",
-    status: room.status || "Available",
+    // status: room.status || "Available",
     location: room.location || "",
     hourlyPrice: hourly ? hourly.basePrice : "",
     dailyPrice: daily ? daily.basePrice : "",
@@ -41,7 +41,7 @@ function EditRoomForm({ room, onSubmit, onClose }) {
         roomNumber: Number(formData.roomNumber),
         maxOccupancy: Number(formData.maxOccupancy),
         roomType: formData.roomType,
-        status: formData.status,
+        // status: formData.status,
         location: formData.location,
         prices,
       };
@@ -104,9 +104,10 @@ function EditRoomForm({ room, onSubmit, onClose }) {
               disabled={isSubmitting}
             >
               <option value="">Choose room type</option>
-              <option value="Single bed">Single bed</option>
-              <option value="Double bed">Double bed</option>
-              <option value="Twin beds">Twin beds</option>
+              <option value="Standard">Standard</option>
+              <option value="Deluxe">Deluxe</option>
+              <option value="Suite">Suite</option>
+              <option value="Executive">Executive</option>
             </select>
           </div>
           <div>
@@ -181,7 +182,7 @@ function EditRoomForm({ room, onSubmit, onClose }) {
               disabled={isSubmitting}
             />
           </div>
-          <div>
+          {/* <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Status
             </label>
@@ -197,7 +198,7 @@ function EditRoomForm({ room, onSubmit, onClose }) {
               <option value="Reserved">Reserved</option>
               <option value="Booked">Booked</option>
             </select>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-3 border-t pt-6">

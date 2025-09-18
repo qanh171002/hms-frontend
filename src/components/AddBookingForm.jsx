@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import Button from "./Button";
 import SpinnerMini from "./SpinnerMini";
+import { updateRoom } from "../apis/roomsApi";
 
 function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
   const toISOEndOfDay = (v) =>
     v ? new Date(`${v}T23:59:59`).toISOString() : "";
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.guestFullName.trim())
@@ -73,7 +74,17 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
       cancelReason: formData.cancelReason.trim(),
     };
 
-    onSubmit(bookingData);
+    try {
+      const createdBooking = await onSubmit(bookingData);
+
+      if (createdBooking && createdBooking.roomId) {
+        await updateRoom(createdBooking.roomId, { status: "Reserved" });
+        toast.success("Room status updated to Reserved");
+      }
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      toast.error("Failed to create booking");
+    }
   };
 
   const handleChange = (e) => {
