@@ -15,6 +15,7 @@ import {
 } from "../apis/bookingsApi";
 import { createInvoice } from "../apis/invoicesApi";
 import { updateRoom } from "../apis/roomsApi";
+import { getCountries } from "../apis/countriesApi";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
@@ -32,6 +33,8 @@ function BookingDetail() {
   const [booking, setBooking] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [countries, setCountries] = useState([]);
+  const [flagLoaded, setFlagLoaded] = useState(false);
 
   useEffect(() => {
     const fetchBookingData = async () => {
@@ -56,6 +59,22 @@ function BookingDetail() {
 
     fetchBookingData();
   }, [id]);
+
+  useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const list = await getCountries();
+        setCountries(list);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    loadCountries();
+  }, []);
+
+  useEffect(() => {
+    setFlagLoaded(false);
+  }, [booking?.guestNationality, countries]);
 
   const formatDateTime = (dateString) => {
     if (!dateString) return "N/A";
@@ -139,6 +158,22 @@ function BookingDetail() {
       return diffDays;
     } catch {
       return 0;
+    }
+  };
+
+  const normalize = (s) => {
+    try {
+      return String(s || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .replace(/[^a-z\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    } catch {
+      return String(s || "")
+        .toLowerCase()
+        .trim();
     }
   };
 
@@ -336,21 +371,42 @@ function BookingDetail() {
         </div>
 
         {/* Body list */}
-        <div className="space-y-6 px-6 py-5">
+        <div className="space-y-6 px-14 py-12">
           {/* Guest line */}
           <div className="flex items-center gap-3 text-gray-800">
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-red-100 text-xs text-red-500">
-              ●
+            {(() => {
+              const country = countries.find(
+                (c) =>
+                  normalize(c.name) === normalize(booking.guestNationality),
+              );
+              const flagUrl = country?.flagPng || country?.flagSvg;
+              return flagUrl ? (
+                <>
+                  {!flagLoaded && <span></span>}
+                  <img
+                    src={flagUrl}
+                    alt={booking.guestNationality}
+                    onLoad={() => setFlagLoaded(true)}
+                    className={`${flagLoaded ? "inline-block" : "hidden"} h-4 w-6 rounded border border-gray-200 object-cover`}
+                  />
+                </>
+              ) : (
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-red-100 text-xs text-red-500">
+                  ●
+                </span>
+              );
+            })()}
+            <span className="text-lg font-semibold">
+              {booking.guestFullName}
             </span>
-            <span className="font-semibold">{booking.guestFullName}</span>
-            <span className="mx-2 text-gray-300">•</span>
-            <span className="text-gray-700">
+            <span className="mx-2 text-lg text-gray-500">•</span>
+            <span className="text-lg text-gray-700">
               {booking.guestNationality || "—"}
             </span>
             {booking.guestIdNumber && (
               <>
-                <span className="mx-2 text-gray-300">•</span>
-                <span className="text-gray-700">
+                <span className="mx-2 text-lg text-gray-500">•</span>
+                <span className="text-lg text-gray-700">
                   National ID {booking.guestIdNumber}
                 </span>
               </>
@@ -360,15 +416,17 @@ function BookingDetail() {
           {/* Room number */}
           <div className="flex items-center gap-3 text-gray-800">
             <HiOutlineHome className="text-xl text-blue-500" />
-            <span className="font-medium">Room number</span>
-            <span className="text-gray-700">{booking.roomNumber ?? "—"}</span>
+            <span className="text-lg font-medium">Room number</span>
+            <span className="text-lg text-gray-700">
+              {booking.roomNumber ?? "—"}
+            </span>
           </div>
 
           {/* Booking type */}
           <div className="flex items-center gap-3 text-gray-800">
             <HiOutlineCalendar className="text-xl text-blue-500" />
-            <span className="font-medium">Booking type</span>
-            <span className="text-gray-700">
+            <span className="text-lg font-medium">Booking type</span>
+            <span className="text-lg text-gray-700">
               {booking.bookingType?.charAt(0).toUpperCase() +
                 booking.bookingType?.slice(1).toLowerCase()}
             </span>
@@ -377,16 +435,18 @@ function BookingDetail() {
           {/* Number of guests */}
           <div className="flex items-center gap-3 text-gray-800">
             <HiOutlineUser className="text-xl text-blue-500" />
-            <span className="font-medium">Number of guests</span>
-            <span className="text-gray-700">{booking.numberOfGuests}</span>
+            <span className="text-lg font-medium">Number of guests</span>
+            <span className="text-lg text-gray-700">
+              {booking.numberOfGuests}
+            </span>
           </div>
 
           {/* Notes (optional) */}
           {booking.notes && booking.notes.trim() !== "" && (
             <div className="flex items-center gap-3 text-gray-800">
               <HiOutlineChatBubbleLeftRight className="text-xl text-blue-500" />
-              <span className="font-medium">Notes</span>
-              <span className="text-gray-700">{booking.notes}</span>
+              <span className="text-lg font-medium">Notes</span>
+              <span className="text-lg text-gray-700">{booking.notes}</span>
             </div>
           )}
 
@@ -394,8 +454,10 @@ function BookingDetail() {
           {booking.cancelReason && booking.cancelReason.trim() !== "" && (
             <div className="flex items-center gap-3 text-gray-800">
               <HiOutlineChatBubbleLeftRight className="text-xl text-blue-500" />
-              <span className="font-medium">Cancel reason</span>
-              <span className="text-gray-700">{booking.cancelReason}</span>
+              <span className="text-lg font-medium">Cancel reason</span>
+              <span className="text-lg text-gray-700">
+                {booking.cancelReason}
+              </span>
             </div>
           )}
 
@@ -404,7 +466,7 @@ function BookingDetail() {
             <div className="flex items-center justify-between rounded-lg border border-yellow-100 bg-yellow-50 px-5 py-4">
               <div className="flex items-center gap-2 text-yellow-800">
                 <HiOutlineCurrencyDollar className="text-2xl" />
-                <span className="font-semibold">Total price</span>
+                <span className="text-lg font-semibold">Total price</span>
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-2xl font-bold text-yellow-900">

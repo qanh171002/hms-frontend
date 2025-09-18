@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 import Button from "./Button";
 import SpinnerMini from "./SpinnerMini";
 import { updateRoom } from "../apis/roomsApi";
+import { useEffect } from "react";
+import { getCountries } from "../apis/countriesApi";
 
 function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
   const [formData, setFormData] = useState({
@@ -20,6 +22,20 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
     notes: "",
     cancelReason: "",
   });
+
+  const [countries, setCountries] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const list = await getCountries();
+        setCountries(list);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    load();
+  }, []);
 
   const inputClass =
     "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
@@ -75,7 +91,19 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
     };
 
     try {
-      const createdBooking = await onSubmit(bookingData);
+      let bookingWithFlag = bookingData;
+
+      const selectedByName = countries.find(
+        (c) => c.name === bookingData.guestNationality,
+      );
+      if (selectedByName) {
+        bookingWithFlag = {
+          ...bookingData,
+          guestFlag: selectedByName.flagPng || selectedByName.flagSvg,
+        };
+      }
+
+      const createdBooking = await onSubmit(bookingWithFlag);
 
       if (createdBooking && createdBooking.roomId) {
         await updateRoom(createdBooking.roomId, { status: "Reserved" });
@@ -136,14 +164,20 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Nationality
             </label>
-            <input
-              type="text"
+            <select
               name="guestNationality"
               value={formData.guestNationality}
               onChange={handleChange}
               className={inputClass}
               disabled={isSubmitting}
-            />
+            >
+              <option value="">Select country</option>
+              {countries.map((c) => (
+                <option key={c.code} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
