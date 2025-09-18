@@ -55,7 +55,7 @@ function Login() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
           </div>
@@ -66,14 +66,9 @@ function Login() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
-            <div className="mt-1 text-right">
-              <a href="#" className="text-sm text-gray-500 hover:underline">
-                Forgot password?
-              </a>
-            </div>
           </div>
           <Button
             type="submit"
@@ -83,7 +78,6 @@ function Login() {
             {isLoading ? (
               <div className="flex items-center justify-center">
                 <SpinnerMini />
-                {/* <span className="ml-2">Signing in...</span> */}
               </div>
             ) : (
               "Sign in"

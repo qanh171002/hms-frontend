@@ -58,9 +58,6 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await login(credentials);
-      if (!response?.token) {
-        throw new Error("Login failed!");
-      }
 
       try {
         const userData = await getCurrentUser();
