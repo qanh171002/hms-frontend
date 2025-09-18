@@ -21,6 +21,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoomDetail from "./pages/RoomDetail";
 import BookingDetail from "./pages/BookingDetail";
+import InvoiceDetail from "./pages/InvoiceDetail";
 
 function AppLayout() {
   return (
@@ -63,6 +64,7 @@ function App() {
               <Route path="/settings" element={<Settings />} />
               <Route path="/assets" element={<Assets />} />
               <Route path="/invoices" element={<Invoices />} />
+              <Route path="/invoices/:id" element={<InvoiceDetail />} />
             </Route>
 
             <Route path="/login" element={<Login />} />

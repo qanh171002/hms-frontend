@@ -13,7 +13,7 @@ import {
   updateBooking,
   deleteBooking,
 } from "../apis/bookingsApi";
-import { createInvoice } from "../apis/invoicesApi";
+import { createInvoice, getInvoices } from "../apis/invoicesApi";
 import { updateRoom } from "../apis/roomsApi";
 import { getCountries } from "../apis/countriesApi";
 import Spinner from "../components/Spinner";
@@ -35,6 +35,7 @@ function BookingDetail() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [countries, setCountries] = useState([]);
   const [flagLoaded, setFlagLoaded] = useState(false);
+  const [invoiceId, setInvoiceId] = useState(null);
 
   useEffect(() => {
     const fetchBookingData = async () => {
@@ -85,6 +86,24 @@ function BookingDetail() {
       return "Invalid Date";
     }
   };
+
+  useEffect(() => {
+    const fetchInvoiceByBooking = async () => {
+      if (!booking?.id) return;
+      try {
+        const data = await getInvoices();
+        const list = data?.content || [];
+        const found = list.find((inv) => inv.bookingId === booking.id);
+        if (found?.id) setInvoiceId(found.id);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    if (booking?.status === "Checked out" && !invoiceId) {
+      fetchInvoiceByBooking();
+    }
+  }, [booking?.status, booking?.id, invoiceId]);
 
   const formatWeekdayDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -238,6 +257,7 @@ function BookingDetail() {
         notes: "",
       };
       const createdInvoice = await createInvoice(invoiceData);
+      setInvoiceId(createdInvoice?.id || null);
 
       if (roomId) {
         toast.success(
@@ -502,6 +522,15 @@ function BookingDetail() {
           </Button>
         )}
 
+        {booking.status === "Checked out" && (
+          <Button
+            size="medium"
+            onClick={() => navigate(`/invoices/${invoiceId}`)}
+            disabled={!invoiceId || isUpdating}
+          >
+            {invoiceId ? "Check invoice" : "Finding invoice..."}
+          </Button>
+        )}
         <Button
           variation="danger"
           size="medium"
