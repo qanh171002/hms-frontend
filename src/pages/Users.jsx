@@ -43,7 +43,9 @@ function Users() {
       try {
         setIsLoading(true);
         const data = await getUsers();
-        setUsers(data.content || []);
+        const list = data.content || [];
+        const sorted = [...list].sort((a, b) => (a.id || 0) - (b.id || 0));
+        setUsers(sorted);
       } catch (err) {
         console.error("Error fetching users:", err);
         toast.error("Failed to fetch users!");
@@ -59,7 +61,9 @@ function Users() {
     try {
       setIsSubmitting(true);
       const createdUser = await createUser(newUser);
-      setUsers((prevUsers) => [...prevUsers, createdUser]);
+      setUsers((prevUsers) =>
+        [...prevUsers, createdUser].sort((a, b) => (a.id || 0) - (b.id || 0)),
+      );
       setIsModalOpen(false);
       toast.success("User added successfully!");
     } catch (err) {
@@ -75,9 +79,9 @@ function Users() {
       setIsSubmitting(true);
       const editedUser = await updateUser(editingUser.id, updatedUser);
       setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === editingUser.id ? editedUser : user,
-        ),
+        prevUsers
+          .map((user) => (user.id === editingUser.id ? editedUser : user))
+          .sort((a, b) => (a.id || 0) - (b.id || 0)),
       );
       setIsEditModalOpen(false);
       setEditingUser(null);
@@ -99,7 +103,11 @@ function Users() {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await deleteUser(id);
-        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+        setUsers((prevUsers) =>
+          prevUsers
+            .filter((user) => user.id !== id)
+            .sort((a, b) => (a.id || 0) - (b.id || 0)),
+        );
         toast.success("User deleted successfully!");
       } catch (err) {
         toast.error("Failed to delete user!");

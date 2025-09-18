@@ -46,7 +46,9 @@ function Invoices() {
       try {
         setIsLoading(true);
         const data = await getInvoices();
-        setInvoices(data.content || []);
+        const list = data.content || [];
+        const sorted = [...list].sort((a, b) => (a.id || 0) - (b.id || 0));
+        setInvoices(sorted);
       } catch (err) {
         console.error("Error fetching invoices:", err);
         toast.error("Failed to fetch invoices!");
@@ -81,9 +83,11 @@ function Invoices() {
         updatedInvoice,
       );
       setInvoices((prevInvoices) =>
-        prevInvoices.map((invoice) =>
-          invoice.id === editingInvoice.id ? editedInvoice : invoice,
-        ),
+        prevInvoices
+          .map((invoice) =>
+            invoice.id === editingInvoice.id ? editedInvoice : invoice,
+          )
+          .sort((a, b) => (a.id || 0) - (b.id || 0)),
       );
       setIsEditModalOpen(false);
       setEditingInvoice(null);
