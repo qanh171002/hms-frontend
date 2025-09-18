@@ -42,7 +42,10 @@ function Login() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-md">
         <div className="flex flex-col items-center">
-          <h1 className="mt-2 text-2xl font-bold text-blue-500">Hotelio</h1>
+          <div className="mt-2 flex items-center gap-1">
+            <img src="/logo.svg" alt="Hotelio logo" className="h-8 w-8" />
+            <h1 className="text-2xl font-bold text-blue-500">Hotelio</h1>
+          </div>
           <p className="mb-6 font-medium text-gray-700">
             Sign in to your account
           </p>
