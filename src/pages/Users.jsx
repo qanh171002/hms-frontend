@@ -50,10 +50,6 @@ function Users() {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-<<<<<<< HEAD
-=======
-
->>>>>>> 3257e9c2bbb44dca5c7cf27581996c5f0c8058f6
         const data = await searchUsersByRole(
           activeFilter,
           currentPage - 1,
@@ -61,10 +57,6 @@ function Users() {
         );
         setUsers(data.content || []);
         setTotalPages(data.totalPages);
-<<<<<<< HEAD
-=======
-
->>>>>>> 3257e9c2bbb44dca5c7cf27581996c5f0c8058f6
       } catch (err) {
         toast.error("Failed to fetch users!");
       } finally {
