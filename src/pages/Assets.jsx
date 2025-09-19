@@ -49,7 +49,9 @@ function Assets() {
       try {
         setIsLoading(true);
         const data = await getAssets();
-        setAssets(data.content || []);
+        const list = data.content || [];
+        const sorted = [...list].sort((a, b) => (a.id || 0) - (b.id || 0));
+        setAssets(sorted);
       } catch (err) {
         console.error("Error fetching assets:", err);
         toast.error("Failed to fetch assets!");
@@ -65,7 +67,9 @@ function Assets() {
     try {
       setIsSubmitting(true);
       const createdAsset = await createAsset(newAsset);
-      setAssets((prevAssets) => [...prevAssets, createdAsset]);
+      setAssets((prevAssets) =>
+        [...prevAssets, createdAsset].sort((a, b) => (a.id || 0) - (b.id || 0)),
+      );
       setIsModalOpen(false);
       toast.success("Asset added successfully!");
     } catch (err) {
@@ -81,9 +85,9 @@ function Assets() {
       setIsSubmitting(true);
       const editedAsset = await updateAsset(editingAsset.id, updatedAsset);
       setAssets((prevAssets) =>
-        prevAssets.map((asset) =>
-          asset.id === editingAsset.id ? editedAsset : asset,
-        ),
+        prevAssets
+          .map((asset) => (asset.id === editingAsset.id ? editedAsset : asset))
+          .sort((a, b) => (a.id || 0) - (b.id || 0)),
       );
       setIsEditModalOpen(false);
       setEditingAsset(null);

@@ -57,3 +57,46 @@ export const deleteRoom = async (id) => {
     throw error;
   }
 };
+
+export const filterRooms = async (filters) => {
+  try {
+    const filterParams = {};
+
+    if (filters.roomType && filters.roomType !== "") {
+      filterParams.roomType = filters.roomType;
+    }
+
+    if (filters.status && filters.status !== "") {
+      filterParams.status = filters.status;
+    }
+
+    if (filters.location && filters.location !== "") {
+      filterParams.location = filters.location;
+    }
+
+    if (filters.maxOccupancy && filters.maxOccupancy !== "") {
+      filterParams.maxOccupancy = parseInt(filters.maxOccupancy);
+    }
+
+    if (filters.desiredCheckIn && filters.desiredCheckIn !== "") {
+      filterParams.desiredCheckIn = new Date(
+        filters.desiredCheckIn,
+      ).toISOString();
+    }
+
+    if (filters.desiredCheckOut && filters.desiredCheckOut !== "") {
+      filterParams.desiredCheckOut = new Date(
+        filters.desiredCheckOut,
+      ).toISOString();
+    }
+
+    console.log("Filter params:", filterParams);
+
+    const res = await apiClient.post("/rooms/filter", filterParams);
+    console.log("Filter response:", res.data);
+    return res.data.content || [];
+  } catch (error) {
+    console.error("Error filtering rooms:", error);
+    throw error;
+  }
+};

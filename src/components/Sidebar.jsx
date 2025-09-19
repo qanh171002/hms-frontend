@@ -12,7 +12,8 @@ import { NavLink } from "react-router-dom";
 function Sidebar() {
   return (
     <aside className="relative z-10 flex h-full w-72 flex-col bg-white">
-      <div className="flex items-center justify-center p-4">
+      <div className="flex items-center justify-center gap-1 px-4 pt-12 pb-3">
+        <img src="/logo.svg" alt="Hotelio logo" className="h-8 w-8" />
         <h1 className="text-2xl font-bold text-blue-500">Hotelio</h1>
       </div>
       <nav className="flex flex-col px-6 py-8">

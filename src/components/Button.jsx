@@ -18,7 +18,8 @@ function Button({
   const variationStyles = {
     primary: "bg-blue-500 text-white hover:bg-blue-600",
     secondary: "bg-gray-200 text-gray-700 hover:bg-gray-300",
-    tertiary: "bg-white text-gray-700 hover:bg-gray-50",
+    tertiary:
+      "bg-white text-slate-700 hover:bg-slate-50 border border-slate-300",
     danger: "bg-red-700 text-white hover:bg-red-800",
   };
 

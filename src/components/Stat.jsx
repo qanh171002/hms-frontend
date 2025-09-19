@@ -15,7 +15,7 @@ function Stat({
       <div className="flex justify-between">
         <div className="flex flex-col gap-2 text-left">
           <p
-            className={`text-sm font-medium ${isGradient ? "text-gray-100" : "text-gray-500"}`}
+            className={`text-sm font-medium uppercase ${isGradient ? "text-gray-100" : "text-gray-500"}`}
           >
             {title}
           </p>
