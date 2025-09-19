@@ -36,14 +36,20 @@ function Bookings() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const pageBookings = bookings;
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         setIsLoading(true);
-        const data = await getBookings();
-        const sorted = [...data].sort((a, b) => (a.id || 0) - (b.id || 0));
+        const data = await getBookings(currentPage - 1, PER_PAGE);
+        const sorted = [...(data.content || [])].sort(
+          (a, b) => (a.id || 0) - (b.id || 0),
+        );
         setBookings(sorted);
+        setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("Error fetching bookings:", err);
         toast.error("Failed to fetch bookings!");
@@ -53,7 +59,7 @@ function Bookings() {
     };
 
     fetchBookings();
-  }, []);
+  }, [currentPage, activeFilter]);
 
   const handleAddBooking = async (newBooking) => {
     try {
@@ -121,11 +127,6 @@ function Bookings() {
   };
 
   const PER_PAGE = 10;
-  const totalPages = Math.max(1, Math.ceil(filteredBookings.length / PER_PAGE));
-  const safePage = Math.min(Math.max(1, currentPage), totalPages);
-  const start = (safePage - 1) * PER_PAGE;
-  const end = start + PER_PAGE;
-  const pageBookings = filteredBookings.slice(start, end);
 
   const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
   const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
@@ -336,28 +337,39 @@ function Bookings() {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="flex items-center justify-between p-4">
           <p className="text-sm text-gray-500">
-            Showing {filteredBookings.length === 0 ? 0 : start + 1} to{" "}
-            {Math.min(end, filteredBookings.length)} of{" "}
-            {filteredBookings.length} results
+            Page {currentPage} of {totalPages}
           </p>
           <div className="flex items-center gap-2">
             <button
               className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
               onClick={goPrev}
-              disabled={safePage === 1}
+              disabled={currentPage === 1}
             >
               &lt; Previous
             </button>
             <button
               className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
               onClick={goNext}
-              disabled={safePage === totalPages}
+              disabled={currentPage === totalPages}
             >
               Next &gt;
             </button>
+          </div>
+          <div className="flex items-center gap-4">
+            <label className="text-sm text-gray-600">Rows per page:</label>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
+            >
+              <option value={10}>10</option>
+              <option value={50}>50</option>
+            </select>
           </div>
         </div>
       </div>

@@ -34,6 +34,9 @@ function Rooms() {
     desiredCheckIn: "",
     desiredCheckOut: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const [filterTimeout, setFilterTimeout] = useState(null);
 
@@ -44,11 +47,9 @@ function Rooms() {
   const fetchInitialRooms = async () => {
     try {
       setIsLoading(true);
-      const data = await getRooms();
-      const sorted = [...data].sort(
-        (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
-      );
-      setRooms(sorted);
+      const data = await getRooms(currentPage - 1, pageSize);
+      setRooms(data.content || []);
+      setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error("Error fetching rooms:", err);
       toast.error("Failed to load rooms");
@@ -64,26 +65,25 @@ function Rooms() {
         (value) => value !== "",
       );
 
+      let data;
       if (hasActiveFilters) {
-        const data = await filterRooms(filters);
-        const sorted = [...data].sort(
-          (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
-        );
-        setRooms(sorted);
+        data = await filterRooms(filters, currentPage - 1, pageSize);
       } else {
-        const data = await getRooms();
-        const sorted = [...data].sort(
-          (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
-        );
-        setRooms(sorted);
+        data = await getRooms(currentPage - 1, pageSize);
       }
+      const sorted = [...(data.content || [])].sort(
+        (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
+      );
+
+      setRooms(sorted);
+      setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error("Error filtering rooms:", err);
       toast.error("Failed to filter rooms");
     } finally {
       setIsFiltering(false);
     }
-  }, [filters]);
+  }, [filters, currentPage, pageSize]);
 
   useEffect(() => {
     if (filterTimeout) {
@@ -325,6 +325,43 @@ function Rooms() {
               {rooms.map((room) => (
                 <RoomCard key={room.id} room={room} />
               ))}
+            </div>
+            <div className="flex items-center justify-between p-4">
+              <p className="text-sm text-gray-500">
+                Page {currentPage} of {totalPages}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  &lt; Previous
+                </button>
+                <button
+                  className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  Next &gt;
+                </button>
+              </div>
+              <div className="flex items-center gap-4">
+                <label className="text-sm text-gray-600">Rooms per page:</label>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
+                >
+                  <option value={10}>10</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
             </div>
           </>
         )}
