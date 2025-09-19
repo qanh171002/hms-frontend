@@ -21,15 +21,16 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoomDetail from "./pages/RoomDetail";
 import BookingDetail from "./pages/BookingDetail";
+import InvoiceDetail from "./pages/InvoiceDetail";
 
 function AppLayout() {
   return (
-    <div className="flex overflow-hidden h-screen">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex overflow-auto flex-col flex-1 bg-gray-50">
+      <div className="flex flex-1 flex-col overflow-auto bg-gray-50">
         <Header />
-        <main className="overflow-scroll p-8 no-scrollbar">
-          <div className="flex flex-col gap-8 p-8 mx-auto max-w-10xl">
+        <main className="no-scrollbar overflow-scroll p-8">
+          <div className="max-w-10xl mx-auto flex flex-col gap-8 px-28 py-8">
             <Outlet />
           </div>
         </main>
@@ -63,6 +64,7 @@ function App() {
               <Route path="/settings" element={<Settings />} />
               <Route path="/assets" element={<Assets />} />
               <Route path="/invoices" element={<Invoices />} />
+              <Route path="/invoices/:id" element={<InvoiceDetail />} />
             </Route>
 
             <Route path="/login" element={<Login />} />

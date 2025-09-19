@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import { createBooking, deleteBooking, getBookings } from "../apis/bookingsApi";
-import { FaPlus } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
 import AddBookingForm from "../components/AddBookingForm";
@@ -43,7 +42,8 @@ function Bookings() {
       try {
         setIsLoading(true);
         const data = await getBookings();
-        setBookings(data);
+        const sorted = [...data].sort((a, b) => (a.id || 0) - (b.id || 0));
+        setBookings(sorted);
       } catch (err) {
         console.error("Error fetching bookings:", err);
         toast.error("Failed to fetch bookings!");
@@ -59,9 +59,14 @@ function Bookings() {
     try {
       setIsSubmitting(true);
       const createdBooking = await createBooking(newBooking);
-      setBookings((prevBookings) => [...prevBookings, createdBooking]);
+      setBookings((prevBookings) =>
+        [...prevBookings, createdBooking].sort(
+          (a, b) => (a.id || 0) - (b.id || 0),
+        ),
+      );
       setIsModalOpen(false);
       toast.success("Booking added successfully!");
+      return createdBooking;
     } catch (err) {
       console.error("Error in handleAddBooking:", err);
       toast.error(err.message || "Failed to add booking!");
@@ -75,7 +80,9 @@ function Bookings() {
       try {
         await deleteBooking(id);
         setBookings((prevBookings) =>
-          prevBookings.filter((booking) => booking.id !== id),
+          prevBookings
+            .filter((booking) => booking.id !== id)
+            .sort((a, b) => (a.id || 0) - (b.id || 0)),
         );
         toast.success("Booking deleted successfully!");
       } catch (err) {
