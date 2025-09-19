@@ -2,7 +2,13 @@ import { HiTrash, HiPencil } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import { getUsers, deleteUser, createUser, updateUser } from "../apis/usersApi";
+import {
+  getUsers,
+  deleteUser,
+  createUser,
+  updateUser,
+  searchUsersByRole,
+} from "../apis/usersApi";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
 import AddUserForm from "../components/AddUserForm";
@@ -37,17 +43,21 @@ function Users() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
-        const data = await getUsers();
-        const list = data.content || [];
-        const sorted = [...list].sort((a, b) => (a.id || 0) - (b.id || 0));
-        setUsers(sorted);
+        const data = await searchUsersByRole(
+          activeFilter,
+          currentPage - 1,
+          pageSize,
+        );
+        setUsers(data.content || []);
+        setTotalPages(data.totalPages);
       } catch (err) {
-        console.error("Error fetching users:", err);
         toast.error("Failed to fetch users!");
       } finally {
         setIsLoading(false);
@@ -55,7 +65,7 @@ function Users() {
     };
 
     fetchUsers();
-  }, []);
+  }, [currentPage, pageSize, activeFilter]);
 
   const handleAddUser = async (newUser) => {
     try {
@@ -140,12 +150,6 @@ function Users() {
   };
 
   const PER_PAGE = 10;
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PER_PAGE));
-  const safePage = Math.min(Math.max(1, currentPage), totalPages);
-  const start = (safePage - 1) * PER_PAGE;
-  const end = start + PER_PAGE;
-  const pageUsers = filteredUsers.slice(start, end);
-
   const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
   const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
@@ -239,7 +243,7 @@ function Users() {
                   </td>
                 </tr>
               ) : (
-                pageUsers.map((user) => (
+                filteredUsers.map((user) => (
                   <tr key={user.id}>
                     <td className="px-6 py-4 text-base font-medium whitespace-nowrap text-gray-900">
                       <div className="font-semibold">#{user.id}</div>
@@ -289,28 +293,39 @@ function Users() {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="flex items-center justify-between p-4">
           <p className="text-sm text-gray-500">
-            Showing {filteredUsers.length === 0 ? 0 : start + 1} to{" "}
-            {Math.min(end, filteredUsers.length)} of {filteredUsers.length}{" "}
-            results
+            Page {currentPage} of {totalPages}
           </p>
           <div className="flex items-center gap-2">
             <button
               className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
               onClick={goPrev}
-              disabled={safePage === 1}
+              disabled={currentPage === 1}
             >
               &lt; Previous
             </button>
             <button
               className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
               onClick={goNext}
-              disabled={safePage === totalPages}
+              disabled={currentPage === totalPages}
             >
               Next &gt;
             </button>
+          </div>
+          <div className="flex items-center gap-4">
+            <label className="text-sm text-gray-600">Rows per page:</label>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
+            >
+              <option value={10}>10</option>
+              <option value={50}>50</option>
+            </select>
           </div>
         </div>
       </div>

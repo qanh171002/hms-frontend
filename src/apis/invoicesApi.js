@@ -1,8 +1,10 @@
 import axios from "./axiosConfig";
 
-export const getInvoices = async () => {
+export const getInvoices = async (page = 0, size = 10) => {
   try {
-    const response = await axios.get("/invoices");
+    const response = await axios.get("/invoices", {
+      params: { page, size },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching invoices:", error);

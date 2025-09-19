@@ -20,9 +20,9 @@ export const updateUserProfile = async (id, userData) => {
   }
 };
 
-export const getUsers = async () => {
+export const getUsers = async (page = 0, size = 10) => {
   try {
-    const response = await axios.get("/users");
+    const response = await axios.get(`/users?page=${page}&size=${size}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -66,6 +66,23 @@ export const deleteUser = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Error deleting user:", error);
+    throw error;
+  }
+};
+
+export const searchUsersByRole = async (role, page = 0, size = 10) => {
+  try {
+    const filter = {
+      roles: role && role !== "All" ? [role] : [],
+    };
+
+    const response = await axios.post(
+      `/users/search?page=${page}&size=${size}`,
+      filter,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error searching users by role:", error);
     throw error;
   }
 };

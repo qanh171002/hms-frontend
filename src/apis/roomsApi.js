@@ -1,13 +1,15 @@
 import apiClient from "./axiosConfig";
 
-export const getRooms = async () => {
+export const getRooms = async (page = 0, size = 10) => {
   try {
-    const res = await apiClient.get("/rooms");
-    console.log(res.data);
-    return res.data.content || [];
+    const res = await apiClient.get("/rooms", { params: { page, size } });
+    if (!res || !res.data) {
+      return { content: [], totalPages: 1, totalElements: 0 };
+    }
+    return res.data;
   } catch (error) {
     console.error("Error fetching rooms:", error);
-    throw error;
+    return { content: [], totalPages: 1, totalElements: 0 };
   }
 };
 
@@ -58,7 +60,7 @@ export const deleteRoom = async (id) => {
   }
 };
 
-export const filterRooms = async (filters) => {
+export const filterRooms = async (filters, page = 0, size = 10) => {
   try {
     const filterParams = {};
 
@@ -90,13 +92,26 @@ export const filterRooms = async (filters) => {
       ).toISOString();
     }
 
+    const requestBody =
+      Object.keys(filterParams).length > 0 ? filterParams : {};
+
+    console.log("Filter params:", requestBody);
+
     console.log("Filter params:", filterParams);
 
-    const res = await apiClient.post("/rooms/filter", filterParams);
-    console.log("Filter response:", res.data);
-    return res.data.content || [];
+    const res = await apiClient.post(
+      `/rooms/filter?page=${page}&size=${size}`,
+      filterParams,
+    );
+
+    if (!res || !res.data) {
+      console.warn("Empty response from /rooms/filter");
+      return { content: [], totalPages: 1, totalElements: 0 };
+    }
+
+    return res.data;
   } catch (error) {
     console.error("Error filtering rooms:", error);
-    throw error;
+    return { content: [], totalPages: 1, totalElements: 0 };
   }
 };

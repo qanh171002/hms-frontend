@@ -1,10 +1,12 @@
 import apiClient from "./axiosConfig";
 
-export const getBookings = async () => {
+export const getBookings = async (page = 0, size = 10) => {
   try {
-    const response = await apiClient.get("/bookings");
+    const response = await apiClient.get("/bookings", {
+      params: { page, size },
+    });
     console.log("GET /bookings response:", response.data);
-    return response.data.content || [];
+    return response.data;
   } catch (error) {
     console.error("Error fetching bookings:", error);
     throw error;

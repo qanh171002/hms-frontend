@@ -1,8 +1,10 @@
 import axios from "./axiosConfig";
 
-export const getAssets = async () => {
+export const getAssets = async (page = 0, size = 10) => {
   try {
-    const response = await axios.get("/assets");
+    const response = await axios.get("/assets", {
+      params: { page, size },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching assets:", error);
