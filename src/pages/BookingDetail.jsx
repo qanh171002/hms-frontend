@@ -276,6 +276,44 @@ function BookingDetail() {
     }
   };
 
+  const handleCancelBooking = async () => {
+    if (!booking) return;
+
+    try {
+      const reason = window.prompt(
+        "Please provide a reason for cancellation:",
+        "",
+      );
+      if (reason === null) return; // user cancelled prompt
+      const trimmed = String(reason).trim();
+      if (!trimmed) {
+        toast.error("Cancel reason is required!");
+        return;
+      }
+
+      setIsUpdating(true);
+      const updatedBooking = {
+        ...booking,
+        status: "Cancelled",
+        cancelReason: trimmed,
+      };
+
+      await updateBooking(booking.id, updatedBooking);
+      setBooking(updatedBooking);
+
+      if (booking.roomId) {
+        await updateRoom(booking.roomId, { status: "Available" });
+      }
+
+      toast.success("Booking cancelled successfully.");
+    } catch (err) {
+      toast.error("Failed to cancel booking!");
+      console.error(err);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const handleDeleteBooking = async () => {
     if (!booking) return;
 
@@ -511,9 +549,19 @@ function BookingDetail() {
       {/* Actions */}
       <div className="mt-8 flex flex-wrap justify-end gap-4">
         {booking.status === "Unconfirmed" && (
-          <Button size="medium" onClick={handleCheckIn} disabled={isUpdating}>
-            {isUpdating ? "Processing..." : "Check in"}
-          </Button>
+          <>
+            <Button size="medium" onClick={handleCheckIn} disabled={isUpdating}>
+              {isUpdating ? "Processing..." : "Check in"}
+            </Button>
+            <Button
+              variation="danger"
+              size="medium"
+              onClick={handleCancelBooking}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Processing..." : "Cancel booking"}
+            </Button>
+          </>
         )}
 
         {booking.status === "Checked in" && (

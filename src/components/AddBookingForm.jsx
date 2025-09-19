@@ -20,7 +20,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
     status: "Unconfirmed",
     numberOfGuests: "1",
     notes: "",
-    cancelReason: "",
+    // cancelReason is not provided on creation; only set when cancelling
   });
 
   const [countries, setCountries] = useState([]);
@@ -86,7 +86,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
       status: formData.status,
       numberOfGuests: parseInt(formData.numberOfGuests),
       notes: formData.notes.trim(),
-      cancelReason: formData.cancelReason.trim(),
+      // cancelReason omitted at creation time
     };
 
     try {
@@ -334,19 +334,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
           />
         </div>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">
-            Cancel Reason
-          </label>
-          <textarea
-            name="cancelReason"
-            value={formData.cancelReason}
-            onChange={handleChange}
-            rows="2"
-            className={inputClass}
-            disabled={isSubmitting}
-          />
-        </div>
+        {/* Cancel reason is only added when cancelling a booking in detail page */}
       </div>
       <div className="mt-6 flex justify-end gap-3 border-t pt-6">
         <Button variation="secondary" onClick={onClose} disabled={isSubmitting}>
