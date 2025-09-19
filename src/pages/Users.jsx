@@ -55,7 +55,10 @@ function Users() {
           currentPage - 1,
           pageSize,
         );
-        setUsers(data.content || []);
+        const sortedUsers = [...(data.content || [])].sort(
+          (a, b) => (a.id || 0) - (b.id || 0),
+        );
+        setUsers(sortedUsers);
         setTotalPages(data.totalPages);
       } catch (err) {
         toast.error("Failed to fetch users!");
