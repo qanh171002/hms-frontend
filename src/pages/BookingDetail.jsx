@@ -19,6 +19,7 @@ import { getCountries } from "../apis/countriesApi";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
+import ConfirmModal from "../components/ConfirmModal";
 
 const statusStyles = {
   "Checked in": "bg-green-100 text-green-600",
@@ -36,6 +37,8 @@ function BookingDetail() {
   const [countries, setCountries] = useState([]);
   const [flagLoaded, setFlagLoaded] = useState(false);
   const [invoiceId, setInvoiceId] = useState(null);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
     const fetchBookingData = async () => {
@@ -278,24 +281,21 @@ function BookingDetail() {
 
   const handleCancelBooking = async () => {
     if (!booking) return;
+    setIsCancelOpen(true);
+  };
 
+  const handleDeleteBooking = async () => {
+    if (!booking) return;
+    setIsDeleteOpen(true);
+  };
+
+  const confirmCancelBooking = async (reason) => {
     try {
-      const reason = window.prompt(
-        "Please provide a reason for cancellation:",
-        "",
-      );
-      if (reason === null) return; // user cancelled prompt
-      const trimmed = String(reason).trim();
-      if (!trimmed) {
-        toast.error("Cancel reason is required!");
-        return;
-      }
-
       setIsUpdating(true);
       const updatedBooking = {
         ...booking,
         status: "Cancelled",
-        cancelReason: trimmed,
+        cancelReason: String(reason || "").trim(),
       };
 
       await updateBooking(booking.id, updatedBooking);
@@ -311,38 +311,32 @@ function BookingDetail() {
       console.error(err);
     } finally {
       setIsUpdating(false);
+      setIsCancelOpen(false);
     }
   };
 
-  const handleDeleteBooking = async () => {
-    if (!booking) return;
+  const confirmDeleteBooking = async () => {
+    try {
+      setIsUpdating(true);
+      await deleteBooking(booking.id);
 
-    if (
-      window.confirm(
-        "Are you sure you want to delete this booking? This action cannot be undone.",
-      )
-    ) {
-      try {
-        setIsUpdating(true);
-        await deleteBooking(booking.id);
-
-        const roomId = booking.roomId;
-        if (roomId) {
-          await updateRoom(roomId, { status: "Available" });
-          toast.success(
-            "Booking deleted successfully! Room status updated to Available",
-          );
-        } else {
-          toast.success("Booking deleted successfully!");
-        }
-
-        navigate("/bookings");
-      } catch (err) {
-        toast.error("Failed to delete booking!");
-        console.error(err);
-      } finally {
-        setIsUpdating(false);
+      const roomId = booking.roomId;
+      if (roomId) {
+        await updateRoom(roomId, { status: "Available" });
+        toast.success(
+          "Booking deleted successfully! Room status updated to Available",
+        );
+      } else {
+        toast.success("Booking deleted successfully!");
       }
+
+      navigate("/bookings");
+    } catch (err) {
+      toast.error("Failed to delete booking!");
+      console.error(err);
+    } finally {
+      setIsUpdating(false);
+      setIsDeleteOpen(false);
     }
   };
 
@@ -596,6 +590,30 @@ function BookingDetail() {
           Back
         </Button>
       </div>
+      <ConfirmModal
+        isOpen={isCancelOpen}
+        onClose={() => setIsCancelOpen(false)}
+        onConfirm={confirmCancelBooking}
+        title="Cancel booking"
+        message="Are you sure you want to cancel this booking? Please enter the reason for cancellation."
+        confirmLabel="Cancel booking"
+        cancelLabel="Close"
+        variation="danger"
+        requiresInput
+        inputLabel="Cancel reason"
+        inputPlaceholder="Enter the reason for cancellation"
+        validateInput={(v) => String(v).trim().length > 0}
+      />
+      <ConfirmModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={confirmDeleteBooking}
+        title="Delete booking"
+        message="Are you sure you want to delete this booking? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variation="danger"
+      />
     </div>
   );
 }

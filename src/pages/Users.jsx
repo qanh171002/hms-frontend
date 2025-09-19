@@ -2,6 +2,7 @@ import { HiTrash, HiPencil } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
+import ConfirmModal from "../components/ConfirmModal";
 import {
   deleteUser,
   createUser,
@@ -109,20 +110,26 @@ function Users() {
     setIsEditModalOpen(true);
   };
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const handleDeleteUser = async (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      try {
-        await deleteUser(id);
-        setUsers((prevUsers) =>
-          prevUsers
-            .filter((user) => user.id !== id)
-            .sort((a, b) => (a.id || 0) - (b.id || 0)),
-        );
-        toast.success("User deleted successfully!");
-      } catch (err) {
-        toast.error("Failed to delete user!");
-        console.log(err);
-      }
+    setConfirmDeleteId(id);
+  };
+  const confirmDeleteUser = async () => {
+    try {
+      const id = confirmDeleteId;
+      if (!id) return;
+      await deleteUser(id);
+      setUsers((prevUsers) =>
+        prevUsers
+          .filter((user) => user.id !== id)
+          .sort((a, b) => (a.id || 0) - (b.id || 0)),
+      );
+      toast.success("User deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete user!");
+      console.log(err);
+    } finally {
+      setConfirmDeleteId(null);
     }
   };
 
@@ -349,6 +356,17 @@ function Users() {
           user={editingUser}
         />
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={confirmDeleteUser}
+        title="Delete user"
+        message="Are you sure you want to delete this user? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variation="danger"
+      />
     </>
   );
 }

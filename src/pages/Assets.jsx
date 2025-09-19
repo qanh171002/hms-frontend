@@ -2,13 +2,13 @@ import { HiDotsVertical, HiTrash, HiPencil } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
+import ConfirmModal from "../components/ConfirmModal";
 import {
   getAssets,
   deleteAsset,
   createAsset,
   updateAsset,
 } from "../apis/assetsApi";
-import { FaPlus } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
 import AddAssetForm from "../components/AddAssetForm";
@@ -114,18 +114,22 @@ function Assets() {
     setIsEditModalOpen(true);
   };
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const handleDeleteAsset = async (id) => {
-    if (window.confirm("Are you sure you want to delete this asset?")) {
-      try {
-        await deleteAsset(id);
-        setAssets((prevAssets) =>
-          prevAssets.filter((asset) => asset.id !== id),
-        );
-        toast.success("Asset deleted successfully!");
-      } catch (err) {
-        toast.error("Failed to delete asset!");
-        console.log(err);
-      }
+    setConfirmDeleteId(id);
+  };
+  const confirmDeleteAsset = async () => {
+    try {
+      const id = confirmDeleteId;
+      if (!id) return;
+      await deleteAsset(id);
+      setAssets((prevAssets) => prevAssets.filter((asset) => asset.id !== id));
+      toast.success("Asset deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete asset!");
+      console.log(err);
+    } finally {
+      setConfirmDeleteId(null);
     }
   };
 
@@ -151,9 +155,6 @@ function Assets() {
 
   const PER_PAGE = 10;
   const pageAssets = assets;
-
-  const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
-  const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <>
@@ -376,6 +377,17 @@ function Assets() {
           asset={editingAsset}
         />
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={confirmDeleteAsset}
+        title="Delete asset"
+        message="Are you sure you want to delete this asset? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variation="danger"
+      />
     </>
   );
 }

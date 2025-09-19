@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
+import ConfirmModal from "../components/ConfirmModal";
 import { createBooking, deleteBooking, getBookings } from "../apis/bookingsApi";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
@@ -81,20 +82,26 @@ function Bookings() {
     }
   };
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const handleDeleteBooking = async (id) => {
-    if (window.confirm("Are you sure you want to delete this booking?")) {
-      try {
-        await deleteBooking(id);
-        setBookings((prevBookings) =>
-          prevBookings
-            .filter((booking) => booking.id !== id)
-            .sort((a, b) => (a.id || 0) - (b.id || 0)),
-        );
-        toast.success("Booking deleted successfully!");
-      } catch (err) {
-        toast.error("Failed to delete booking!");
-        console.log(err);
-      }
+    setConfirmDeleteId(id);
+  };
+  const confirmDeleteBooking = async () => {
+    try {
+      const id = confirmDeleteId;
+      if (!id) return;
+      await deleteBooking(id);
+      setBookings((prevBookings) =>
+        prevBookings
+          .filter((booking) => booking.id !== id)
+          .sort((a, b) => (a.id || 0) - (b.id || 0)),
+      );
+      toast.success("Booking deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete booking!");
+      console.log(err);
+    } finally {
+      setConfirmDeleteId(null);
     }
   };
 
@@ -381,6 +388,17 @@ function Bookings() {
           isSubmitting={isSubmitting}
         />
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={confirmDeleteBooking}
+        title="Delete booking"
+        message="Are you sure you want to delete this booking? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variation="danger"
+      />
     </>
   );
 }

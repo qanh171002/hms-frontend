@@ -14,6 +14,7 @@ import Button from "../components/Button";
 import { deleteRoom, getRoomById } from "../apis/roomsApi";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
+import ConfirmModal from "../components/ConfirmModal";
 
 const demoImage =
   "https://www.realestate.com.au/blog/images/2633x1974-fit,progressive/2018/12/19142303/27616925_EPCExternalUser_63f6449d-d085-4d76-82ba-a2dd366d1d84.jpg?auto=format&fit=crop&w=800&q=80";
@@ -24,6 +25,7 @@ export default function RoomDetail() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [roomData, setRoomData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -84,7 +86,9 @@ export default function RoomDetail() {
   };
 
   const handleDeleteRoom = async () => {
-    if (!window.confirm("Do you want to delete this room?")) return;
+    setIsConfirmOpen(true);
+  };
+  const confirmDeleteRoom = async () => {
     try {
       await deleteRoom(id);
       toast.success("Delete room successfully!");
@@ -92,6 +96,8 @@ export default function RoomDetail() {
     } catch (err) {
       toast.error("Delete room failed!");
       console.error("Error deleting room:", err);
+    } finally {
+      setIsConfirmOpen(false);
     }
   };
 
@@ -187,6 +193,16 @@ export default function RoomDetail() {
           onClose={() => setIsEditOpen(false)}
         />
       </Modal>
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmDeleteRoom}
+        title="Delete room"
+        message="Are you sure you want to delete this room? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variation="danger"
+      />
     </div>
   );
 }

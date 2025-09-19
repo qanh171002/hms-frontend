@@ -2,6 +2,7 @@ import { HiTrash, HiPencil } from "react-icons/hi";
 import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
+import ConfirmModal from "../components/ConfirmModal";
 import {
   getInvoices,
   deleteInvoice,
@@ -113,18 +114,24 @@ function Invoices() {
     setIsEditModalOpen(true);
   };
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const handleDeleteInvoice = async (id) => {
-    if (window.confirm("Are you sure you want to delete this invoice?")) {
-      try {
-        await deleteInvoice(id);
-        setInvoices((prevInvoices) =>
-          prevInvoices.filter((invoice) => invoice.id !== id),
-        );
-        toast.success("Invoice deleted successfully!");
-      } catch (err) {
-        toast.error("Failed to delete invoice!");
-        console.log(err);
-      }
+    setConfirmDeleteId(id);
+  };
+  const confirmDeleteInvoice = async () => {
+    try {
+      const id = confirmDeleteId;
+      if (!id) return;
+      await deleteInvoice(id);
+      setInvoices((prevInvoices) =>
+        prevInvoices.filter((invoice) => invoice.id !== id),
+      );
+      toast.success("Invoice deleted successfully!");
+    } catch (err) {
+      toast.error("Failed to delete invoice!");
+      console.log(err);
+    } finally {
+      setConfirmDeleteId(null);
     }
   };
 
@@ -150,9 +157,6 @@ function Invoices() {
 
   const PER_PAGE = 10;
   const pageInvoices = invoices;
-
-  const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
-  const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
   return (
     <>
@@ -361,6 +365,17 @@ function Invoices() {
           invoice={editingInvoice}
         />
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={confirmDeleteInvoice}
+        title="Delete invoice"
+        message="Are you sure you want to delete this invoice? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variation="danger"
+      />
     </>
   );
 }
