@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import {
-  getUsers,
   deleteUser,
   createUser,
   updateUser,
@@ -59,6 +58,7 @@ function Users() {
         setTotalPages(data.totalPages);
       } catch (err) {
         toast.error("Failed to fetch users!");
+        console.log(err);
       } finally {
         setIsLoading(false);
       }

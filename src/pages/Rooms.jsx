@@ -41,22 +41,24 @@ function Rooms() {
   const [filterTimeout, setFilterTimeout] = useState(null);
 
   useEffect(() => {
+    const fetchInitialRooms = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getRooms(currentPage - 1, pageSize);
+        const sorted = [...(data.content || [])].sort(
+          (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
+        );
+        setRooms(sorted);
+        setTotalPages(data.totalPages || 1);
+      } catch (err) {
+        console.error("Error fetching rooms:", err);
+        toast.error("Failed to load rooms");
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchInitialRooms();
-  }, []);
-
-  const fetchInitialRooms = async () => {
-    try {
-      setIsLoading(true);
-      const data = await getRooms(currentPage - 1, pageSize);
-      setRooms(data.content || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      console.error("Error fetching rooms:", err);
-      toast.error("Failed to load rooms");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [currentPage, pageSize]);
 
   const applyFilters = useCallback(async () => {
     try {
@@ -128,6 +130,7 @@ function Rooms() {
       ...prev,
       [key]: value,
     }));
+    setCurrentPage(1);
   };
 
   const clearFilters = () => {
@@ -138,6 +141,7 @@ function Rooms() {
       desiredCheckIn: "",
       desiredCheckOut: "",
     });
+    setCurrentPage(1);
   };
 
   const hasActiveFilters = Object.values(filters).some((value) => value !== "");
@@ -321,7 +325,7 @@ function Rooms() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-5 gap-4">
               {rooms.map((room) => (
                 <RoomCard key={room.id} room={room} />
               ))}

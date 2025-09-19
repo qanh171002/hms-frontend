@@ -82,13 +82,13 @@ export const filterRooms = async (filters, page = 0, size = 10) => {
 
     if (filters.desiredCheckIn && filters.desiredCheckIn !== "") {
       filterParams.desiredCheckIn = new Date(
-        filters.desiredCheckIn,
+        `${filters.desiredCheckIn}T12:00:00`,
       ).toISOString();
     }
 
     if (filters.desiredCheckOut && filters.desiredCheckOut !== "") {
       filterParams.desiredCheckOut = new Date(
-        filters.desiredCheckOut,
+        `${filters.desiredCheckOut}T11:59:59`,
       ).toISOString();
     }
 

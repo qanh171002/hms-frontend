@@ -43,10 +43,9 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
   const isHourly = formData.bookingType === "Hourly";
 
   const toISODateTime = (v) => (v ? new Date(v).toISOString() : "");
-  const toISOStartOfDay = (v) =>
-    v ? new Date(`${v}T00:00:00`).toISOString() : "";
-  const toISOEndOfDay = (v) =>
-    v ? new Date(`${v}T23:59:59`).toISOString() : "";
+  const toISONoon = (v) => (v ? new Date(`${v}T12:00:00`).toISOString() : "");
+  const toISOJustBeforeNoon = (v) =>
+    v ? new Date(`${v}T11:59:59`).toISOString() : "";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,10 +70,10 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting }) {
       roomNumber: parseInt(formData.roomNumber),
       checkInDate: isHourly
         ? toISODateTime(formData.checkInDate)
-        : toISOStartOfDay(formData.checkInDate),
+        : toISONoon(formData.checkInDate),
       checkOutDate: isHourly
         ? toISODateTime(formData.checkOutDate)
-        : toISOEndOfDay(formData.checkOutDate),
+        : toISOJustBeforeNoon(formData.checkOutDate),
       actualCheckInTime:
         isHourly && formData.actualCheckInTime
           ? toISODateTime(formData.actualCheckInTime)

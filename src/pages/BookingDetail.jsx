@@ -357,7 +357,7 @@ function BookingDetail() {
       {/* Card */}
       <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow">
         {/* Purple bar */}
-        <div className="flex flex-col justify-between gap-3 bg-blue-500 p-6 text-blue-100 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-3 bg-blue-500 px-14 py-6 text-blue-50 md:flex-row md:items-center">
           <div className="flex items-center gap-2">
             <HiOutlineHome className="text-3xl" />
             <span className="text-lg font-semibold">
@@ -420,13 +420,13 @@ function BookingDetail() {
               {booking.guestFullName}
             </span>
             <span className="mx-2 text-lg text-gray-500">•</span>
-            <span className="text-lg text-gray-700">
+            <span className="text-lg font-medium text-gray-500">
               {booking.guestNationality || "—"}
             </span>
             {booking.guestIdNumber && (
               <>
                 <span className="mx-2 text-lg text-gray-500">•</span>
-                <span className="text-lg text-gray-700">
+                <span className="text-lg font-medium text-gray-500">
                   National ID {booking.guestIdNumber}
                 </span>
               </>
