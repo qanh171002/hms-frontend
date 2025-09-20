@@ -9,7 +9,7 @@ function Header() {
         <input
           type="text"
           placeholder="Search"
-          className="w-full rounded-md border border-gray-300 p-2 text-sm transition-all duration-100 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-md border border-gray-300 p-2 text-sm transition-all duration-100 ease-in-out focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
       <div>
