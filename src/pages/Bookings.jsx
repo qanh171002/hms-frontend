@@ -76,7 +76,18 @@ function Bookings() {
       return createdBooking;
     } catch (err) {
       console.error("Error in handleAddBooking:", err);
-      toast.error(err.message || "Failed to add booking!");
+
+      let errorMessage = "Failed to add booking!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

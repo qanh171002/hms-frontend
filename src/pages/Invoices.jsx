@@ -103,7 +103,18 @@ function Invoices() {
       toast.success("Invoice updated successfully!");
     } catch (err) {
       console.error("Error in handleEditInvoice:", err);
-      toast.error(err.message || "Failed to update invoice!");
+
+      let errorMessage = "Failed to update invoice!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -128,8 +139,19 @@ function Invoices() {
       );
       toast.success("Invoice deleted successfully!");
     } catch (err) {
-      toast.error("Failed to delete invoice!");
-      console.log(err);
+      console.error("Error deleting invoice:", err);
+
+      let errorMessage = "Failed to delete invoice!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setConfirmDeleteId(null);
     }

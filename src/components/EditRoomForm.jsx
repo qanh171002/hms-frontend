@@ -51,8 +51,19 @@ function EditRoomForm({ room, onSubmit, onClose }) {
       onClose();
       toast.success("Room updated successfully!");
     } catch (err) {
-      toast.error("Failed to update room!");
-      console.log(err);
+      console.error("Error updating room:", err);
+
+      let errorMessage = "Failed to update room!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

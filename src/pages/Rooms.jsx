@@ -1,5 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
-import { createRoom, filterRooms, getRooms } from "../apis/roomsApi";
+import {
+  createRoom,
+  filterRooms,
+  getRooms,
+  updateRoom,
+} from "../apis/roomsApi";
+import { createBooking } from "../apis/bookingsApi";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,11 +16,13 @@ import {
   FaMapMarkedAlt,
   FaUsers,
   FaCalendarAlt,
+  FaCalendarPlus,
 } from "react-icons/fa";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 import Modal from "../components/Modal";
 import AddRoomForm from "../components/AddRoomForm";
+import AddBookingForm from "../components/AddBookingForm";
 import { FaX } from "react-icons/fa6";
 
 const roomTypes = ["Standard", "Deluxe", "Suite", "Executive"];
@@ -22,6 +30,8 @@ const maxOccupancies = [1, 2, 3, 4];
 
 function Rooms() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -118,8 +128,56 @@ function Rooms() {
       setIsModalOpen(false);
       toast.success("Room added successfully!");
     } catch (err) {
-      toast.error("Failed to add room!");
-      console.log(err);
+      console.error("Error adding room:", err);
+
+      let errorMessage = "Failed to add room!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleBookRoom = (room) => {
+    setSelectedRoom(room);
+    setIsBookingModalOpen(true);
+  };
+
+  const handleAddBooking = async (bookingData) => {
+    try {
+      setIsSubmitting(true);
+      const createdBooking = await createBooking(bookingData);
+
+      if (createdBooking && createdBooking.roomId) {
+        await updateRoom(createdBooking.roomId, { status: "Reserved" });
+        toast.success("Room status updated to Reserved");
+      }
+
+      toast.success("Booking created successfully!");
+      setIsBookingModalOpen(false);
+      setSelectedRoom(null);
+    } catch (err) {
+      console.error("Error creating booking:", err);
+
+      let errorMessage = "Failed to create booking!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -242,7 +300,7 @@ function Rooms() {
                   onChange={(e) =>
                     handleFilterChange("location", e.target.value)
                   }
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
@@ -257,7 +315,7 @@ function Rooms() {
                   onChange={(e) =>
                     handleFilterChange("maxOccupancy", e.target.value)
                   }
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Any capacity</option>
                   {maxOccupancies.map((capacity) => (
@@ -280,7 +338,7 @@ function Rooms() {
                   onChange={(e) =>
                     handleFilterChange("desiredCheckIn", e.target.value)
                   }
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
@@ -296,7 +354,7 @@ function Rooms() {
                   onChange={(e) =>
                     handleFilterChange("desiredCheckOut", e.target.value)
                   }
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -327,7 +385,12 @@ function Rooms() {
           <>
             <div className="grid grid-cols-5 gap-4">
               {rooms.map((room) => (
-                <RoomCard key={room.id} room={room} />
+                <RoomCard
+                  key={room.id}
+                  room={room}
+                  onBookRoom={handleBookRoom}
+                  filters={filters}
+                />
               ))}
             </div>
             <div className="flex items-center justify-between p-4">
@@ -377,13 +440,37 @@ function Rooms() {
           isSubmitting={isSubmitting}
         />
       </Modal>
+
+      <Modal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+      >
+        <AddBookingForm
+          onSubmit={handleAddBooking}
+          onClose={() => {
+            setIsBookingModalOpen(false);
+            setSelectedRoom(null);
+          }}
+          isSubmitting={isSubmitting}
+          prefillData={
+            selectedRoom
+              ? {
+                  roomNumber: selectedRoom.roomNumber,
+                  checkInDate: filters.desiredCheckIn || "",
+                  checkOutDate: filters.desiredCheckOut || "",
+                  numberOfGuests: filters.maxOccupancy || "1",
+                }
+              : null
+          }
+        />
+      </Modal>
     </div>
   );
 }
 
 export default Rooms;
 
-function RoomCard({ room }) {
+function RoomCard({ room, onBookRoom, filters }) {
   const navigate = useNavigate();
   const roomName = `Room ${String(room.roomNumber).padStart(3, "0")}`;
   const hourlyPrice = room.prices?.find((p) => p.priceType === "HOURLY");
@@ -392,40 +479,65 @@ function RoomCard({ room }) {
   const displayPrice = dailyPrice || hourlyPrice;
   const priceType = dailyPrice ? "day" : "hour";
 
+  const handleBookClick = (e) => {
+    e.stopPropagation();
+    onBookRoom(room);
+  };
+
+  const handleCardClick = () => {
+    navigate(`/rooms/${room.id}`);
+  };
+
   return (
-    <div
-      className="relative flex min-h-[160px] cursor-pointer flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition duration-300 hover:scale-[1.02] hover:shadow-lg"
-      onClick={() => navigate(`/rooms/${room.id}`)}
-    >
-      <div className="mb-4">
-        <h3 className="text-xl font-bold text-gray-800">{roomName}</h3>
-        <p className="text-sm text-gray-500">{room.location}</p>
-      </div>
-
-      <div className="mb-4 flex flex-col gap-3">
-        <div className="flex items-center text-sm text-gray-600">
-          <FaBed className="mr-2 text-blue-500" />
-          <span className="font-medium">{room.roomType}</span>
+    <div className="relative flex min-h-[200px] flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition duration-300 hover:scale-[1.02] hover:shadow-lg">
+      <div className="flex-1">
+        <div className="mb-4">
+          <h3 className="text-xl font-bold text-gray-800">{roomName}</h3>
+          <p className="text-sm text-gray-500">{room.location}</p>
         </div>
-        <div className="flex items-center text-sm text-gray-600">
-          <FaUserFriends className="mr-2 text-blue-500" />
-          <span>
-            Up to <span className="font-semibold">{room.maxOccupancy}</span>{" "}
-            {room.maxOccupancy === 1 ? "guest" : "guests"}
-          </span>
-        </div>
-      </div>
 
-      {displayPrice && (
-        <div className="text-right">
-          <div className="text-2xl font-bold text-blue-600">
-            ${displayPrice.basePrice}
-            <span className="text-sm font-medium text-gray-500">
-              /{priceType}
+        <div className="mb-4 flex flex-col gap-3">
+          <div className="flex items-center text-sm text-gray-600">
+            <FaBed className="mr-2 text-blue-500" />
+            <span className="font-medium">{room.roomType}</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-600">
+            <FaUserFriends className="mr-2 text-blue-500" />
+            <span>
+              Up to <span className="font-semibold">{room.maxOccupancy}</span>{" "}
+              {room.maxOccupancy === 1 ? "guest" : "guests"}
             </span>
           </div>
         </div>
-      )}
+
+        {displayPrice && (
+          <div className="text-right">
+            <div className="text-2xl font-bold text-blue-600">
+              ${displayPrice.basePrice}
+              <span className="text-sm font-medium text-gray-500">
+                /{priceType}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Book Room Button */}
+      <div className="mt-4 flex gap-2">
+        <button
+          onClick={handleCardClick}
+          className="flex-1 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          View Details
+        </button>
+        <button
+          onClick={handleBookClick}
+          className="flex cursor-pointer items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+        >
+          <FaCalendarPlus className="h-4 w-4" />
+          Book Now
+        </button>
+      </div>
     </div>
   );
 }

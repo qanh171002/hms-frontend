@@ -7,6 +7,8 @@ import {
   FaArrowLeft,
   FaEdit,
   FaTrash,
+  FaClock,
+  FaCalendarDay,
 } from "react-icons/fa";
 import Modal from "../components/Modal";
 import EditRoomForm from "../components/EditRoomForm";
@@ -94,97 +96,141 @@ export default function RoomDetail() {
       toast.success("Delete room successfully!");
       navigate("/rooms");
     } catch (err) {
-      toast.error("Delete room failed!");
       console.error("Error deleting room:", err);
+
+      let errorMessage = "Delete room failed!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsConfirmOpen(false);
     }
   };
 
   return (
-    <div className="grid grid-cols-5 gap-6">
-      <div className="col-span-2 mb-6 flex flex-col justify-center">
-        <h2 className="text-2xl font-bold text-gray-800">Room detail</h2>
-        <p className="text-md text-gray-500">
-          Here is the detail of your hotel room.
-        </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Room Details</h1>
+          <p className="mt-2 text-gray-600">
+            Complete information about this room
+          </p>
+        </div>
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-lg font-semibold text-blue-600 hover:text-blue-800"
+        >
+          <FaArrowLeft />
+          Back
+        </button>
       </div>
 
-      <div className="col-span-3 mb-6 flex items-center justify-end gap-4"></div>
-      <div className="col-span-5 rounded-2xl bg-white p-6">
-        <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-7 flex items-center justify-center">
+      {/* Main Content */}
+      <div className="rounded-2xl bg-white p-8 shadow-lg">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          {/* Left Column - Image */}
+          <div className="flex items-center justify-center">
             <img
               src={demoImage}
-              alt="Room"
-              className="h-[420px] w-full max-w-full rounded-2xl object-cover shadow-lg"
+              alt={`Room ${roomNumberFormatted}`}
+              className="h-96 w-full max-w-full rounded-2xl object-cover shadow-lg"
             />
           </div>
-          <div className="col-span-5 flex h-full flex-col justify-center gap-8 px-4">
-            <div className="mb-2 flex items-center gap-4">
+
+          {/* Right Column - Room Info */}
+          <div className="flex flex-col justify-center space-y-8">
+            <div>
               <h2 className="text-3xl font-bold text-gray-800">
                 Room #{roomNumberFormatted}
               </h2>
-              {/* <span
-                className={`px-4 py-2 text-base font-semibold rounded-full ${statusColor}`}
-              >
-                {roomData.status}
-              </span> */}
+              <p className="mt-2 text-lg text-gray-600">{roomData.location}</p>
             </div>
-            <div className="space-y-6 text-xl">
-              {hourlyPrice && (
-                <div className="flex items-center gap-3 text-gray-700">
-                  <FaDollarSign className="text-2xl text-blue-500" />
-                  <span className="font-semibold">
-                    ${hourlyPrice.basePrice} per hour
-                  </span>
+
+            {/* Room Details */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-blue-100 p-3">
+                  <FaBed className="h-6 w-6 text-blue-600" />
                 </div>
-              )}
-              {dailyPrice && (
-                <div className="flex items-center gap-3 text-gray-700">
-                  <FaDollarSign className="text-2xl text-blue-500" />
-                  <span className="font-semibold">
-                    ${dailyPrice.basePrice} per day
-                  </span>
+                <div>
+                  <p className="text-sm text-gray-500">Room Type</p>
+                  <p className="text-xl font-semibold text-gray-800">
+                    {roomData.roomType}
+                  </p>
                 </div>
-              )}
-              <div className="flex items-center gap-3 text-gray-700">
-                <FaBed className="text-2xl text-blue-500" />
-                <span className="font-semibold">{roomData.roomType}</span>
               </div>
-              <div className="flex items-center gap-3 text-gray-700">
-                <FaUserFriends className="text-2xl text-blue-500" />
-                <span className="font-semibold">{capacityFormatted}</span>
+
+              <div className="flex items-center gap-4">
+                <div className="rounded-lg bg-green-100 p-3">
+                  <FaUserFriends className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Capacity</p>
+                  <p className="text-xl font-semibold text-gray-800">
+                    {capacityFormatted}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="mt-10 flex items-center gap-4">
-              <Button
-                onClick={() => navigate(-1)}
-                variation="tertiary"
-                className="flex items-center gap-2 px-7 py-3 text-lg font-semibold"
-              >
-                <FaArrowLeft />
-                Back
-              </Button>
-              <Button
-                onClick={() => setIsEditOpen(true)}
-                variation="primary"
-                className="flex items-center gap-2 px-7 py-3 text-lg font-semibold"
-              >
-                <FaEdit />
-                Edit
-              </Button>
-              <Button
-                onClick={handleDeleteRoom}
-                variation="danger"
-                className="flex items-center gap-2 px-7 py-3 text-lg font-semibold"
-              >
-                <FaTrash />
-                Delete
-              </Button>
+
+            {/* Pricing */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-gray-800">Pricing</h3>
+              <div className="space-y-3">
+                {hourlyPrice && (
+                  <div className="flex items-center justify-between rounded-lg bg-blue-50 p-4">
+                    <div className="flex items-center gap-3">
+                      <FaClock className="h-5 w-5 text-blue-600" />
+                      <span className="text-gray-700">Hourly Rate</span>
+                    </div>
+                    <span className="text-xl font-bold text-blue-600">
+                      ${hourlyPrice.basePrice}/hour
+                    </span>
+                  </div>
+                )}
+                {dailyPrice && (
+                  <div className="flex items-center justify-between rounded-lg bg-green-50 p-4">
+                    <div className="flex items-center gap-3">
+                      <FaCalendarDay className="h-5 w-5 text-green-600" />
+                      <span className="text-gray-700">Daily Rate</span>
+                    </div>
+                    <span className="text-xl font-bold text-green-600">
+                      ${dailyPrice.basePrice}/day
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center justify-end gap-4">
+        <Button
+          onClick={() => setIsEditOpen(true)}
+          variation="primary"
+          className="flex items-center gap-2"
+        >
+          <FaEdit />
+          Edit Room
+        </Button>
+        <Button
+          onClick={handleDeleteRoom}
+          variation="danger"
+          className="flex items-center gap-2"
+        >
+          <FaTrash />
+          Delete Room
+        </Button>
       </div>
       <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
         <EditRoomForm

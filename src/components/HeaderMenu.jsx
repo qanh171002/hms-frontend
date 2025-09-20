@@ -19,35 +19,44 @@ function HeaderMenu() {
   };
 
   return (
-    <ul className="flex items-center gap-4">
+    <div className="flex items-center gap-3">
+      {/* User Info */}
       {user && (
-        <li className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-            <HiOutlineUser className="text-lg text-gray-600" />
+        <div className="hidden items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 md:flex">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+            <HiOutlineUser className="text-lg text-blue-500" />
           </div>
-          <span className="font-medium text-gray-700">{user.fullName}</span>
-        </li>
+          <div className="text-sm">
+            <p className="font-medium text-gray-800">{user.fullName}</p>
+          </div>
+        </div>
       )}
 
-      <li>
-        <ButtonIcon onClick={() => navigate("/profile")}>
-          <HiOutlineUser
-            className={`text-2xl ${isProfileActive ? "text-blue-600" : "text-gray-700"}`}
-          />
+      {/* Action Buttons */}
+      <div className="flex items-center gap-2">
+        <ButtonIcon
+          onClick={() => navigate("/profile")}
+          className={`rounded-xl p-3 transition-all duration-200 ${
+            isProfileActive
+              ? "bg-blue-100 text-blue-500 shadow-md"
+              : "text-gray-600 hover:bg-gray-100 hover:text-blue-500"
+          }`}
+        >
+          <HiOutlineUser className="text-xl" />
         </ButtonIcon>
-      </li>
-      <li>
-        <ButtonIcon>
-          <HiOutlineSun className="text-2xl text-gray-700" />
-        </ButtonIcon>
-      </li>
 
-      <li>
-        <ButtonIcon onClick={handleLogout}>
-          <HiArrowRightOnRectangle className="text-2xl text-gray-700" />
+        <ButtonIcon className="rounded-xl p-3 text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-yellow-600">
+          <HiOutlineSun className="text-xl" />
         </ButtonIcon>
-      </li>
-    </ul>
+
+        <ButtonIcon
+          onClick={handleLogout}
+          className="rounded-xl p-3 text-gray-600 transition-all duration-200 hover:bg-red-50 hover:text-red-600"
+        >
+          <HiArrowRightOnRectangle className="text-xl" />
+        </ButtonIcon>
+      </div>
+    </div>
   );
 }
 

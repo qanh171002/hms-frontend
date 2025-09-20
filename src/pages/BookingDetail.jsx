@@ -1,11 +1,18 @@
 import {
-  HiOutlineArrowLeft,
   HiOutlineUser,
   HiOutlineHome,
   HiOutlineCalendar,
   HiOutlineCurrencyDollar,
   HiOutlineChatBubbleLeftRight,
 } from "react-icons/hi2";
+import {
+  FaSignInAlt,
+  FaSignOutAlt,
+  FaTimes,
+  FaTrash,
+  FaFileInvoice,
+  FaArrowLeft,
+} from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
@@ -222,8 +229,19 @@ function BookingDetail() {
         toast.success("Check-in successful!");
       }
     } catch (err) {
-      toast.error("Failed to check in!");
-      console.error(err);
+      console.error("Error checking in:", err);
+
+      let errorMessage = "Failed to check in!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsUpdating(false);
     }
@@ -272,8 +290,19 @@ function BookingDetail() {
         );
       }
     } catch (err) {
-      toast.error("Failed to check out!");
-      console.error(err);
+      console.error("Error checking out:", err);
+
+      let errorMessage = "Failed to check out!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsUpdating(false);
     }
@@ -307,8 +336,19 @@ function BookingDetail() {
 
       toast.success("Booking cancelled successfully.");
     } catch (err) {
-      toast.error("Failed to cancel booking!");
-      console.error(err);
+      console.error("Error cancelling booking:", err);
+
+      let errorMessage = "Failed to cancel booking!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsUpdating(false);
       setIsCancelOpen(false);
@@ -332,8 +372,19 @@ function BookingDetail() {
 
       navigate("/bookings");
     } catch (err) {
-      toast.error("Failed to delete booking!");
-      console.error(err);
+      console.error("Error deleting booking:", err);
+
+      let errorMessage = "Failed to delete booking!";
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsUpdating(false);
       setIsDeleteOpen(false);
@@ -381,7 +432,7 @@ function BookingDetail() {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-lg font-semibold text-blue-600 hover:text-blue-800"
         >
-          <HiOutlineArrowLeft />
+          <FaArrowLeft />
           Back
         </button>
       </div>
@@ -544,7 +595,13 @@ function BookingDetail() {
       <div className="mt-8 flex flex-wrap justify-end gap-4">
         {booking.status === "Unconfirmed" && (
           <>
-            <Button size="medium" onClick={handleCheckIn} disabled={isUpdating}>
+            <Button
+              size="medium"
+              onClick={handleCheckIn}
+              disabled={isUpdating}
+              className="flex items-center gap-2"
+            >
+              <FaSignInAlt />
               {isUpdating ? "Processing..." : "Check in"}
             </Button>
             <Button
@@ -552,14 +609,22 @@ function BookingDetail() {
               size="medium"
               onClick={handleCancelBooking}
               disabled={isUpdating}
+              className="flex items-center gap-2"
             >
+              <FaTimes />
               {isUpdating ? "Processing..." : "Cancel booking"}
             </Button>
           </>
         )}
 
         {booking.status === "Checked in" && (
-          <Button size="medium" onClick={handleCheckOut} disabled={isUpdating}>
+          <Button
+            size="medium"
+            onClick={handleCheckOut}
+            disabled={isUpdating}
+            className="flex items-center gap-2"
+          >
+            <FaSignOutAlt />
             {isUpdating ? "Processing..." : "Check out"}
           </Button>
         )}
@@ -569,7 +634,9 @@ function BookingDetail() {
             size="medium"
             onClick={() => navigate(`/invoices/${invoiceId}`)}
             disabled={!invoiceId || isUpdating}
+            className="flex items-center gap-2"
           >
+            <FaFileInvoice />
             {invoiceId ? "Check invoice" : "Finding invoice..."}
           </Button>
         )}
@@ -578,7 +645,9 @@ function BookingDetail() {
           size="medium"
           onClick={handleDeleteBooking}
           disabled={isUpdating}
+          className="flex items-center gap-2"
         >
+          <FaTrash />
           {isUpdating ? "Processing..." : "Delete booking"}
         </Button>
 
@@ -586,7 +655,9 @@ function BookingDetail() {
           variation="secondary"
           size="medium"
           onClick={() => navigate(-1)}
+          className="flex items-center gap-2"
         >
+          <FaArrowLeft />
           Back
         </Button>
       </div>

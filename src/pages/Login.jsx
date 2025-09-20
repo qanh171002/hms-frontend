@@ -126,7 +126,7 @@ function Login() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full transform rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition-all duration-200 hover:scale-[1.02] hover:bg-blue-700 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full transform rounded-lg bg-blue-500 px-4 py-3 font-semibold text-white transition-all duration-200 hover:scale-[1.02] hover:bg-blue-600 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2">

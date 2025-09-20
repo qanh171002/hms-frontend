@@ -11,102 +11,180 @@ import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   return (
-    <aside className="relative z-10 flex h-full w-72 flex-col bg-white">
-      <div className="flex items-center justify-center gap-1 px-4 pt-12 pb-3">
-        <img src="/logo.svg" alt="Hotelio logo" className="h-8 w-8" />
-        <h1 className="text-2xl font-bold text-blue-500">Hotelio</h1>
+    <aside className="relative z-10 flex h-full w-72 flex-col border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-lg">
+      {/* Logo Section */}
+      <div className="flex items-center justify-center gap-3 px-6 pt-8 pb-6">
+        <div className="rounded-full bg-blue-100 p-3 shadow-sm">
+          <img src="/logo.svg" alt="Hotelio logo" className="h-8 w-8" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Hotelio</h1>
+          <p className="text-xs text-gray-500">Hotel Management</p>
+        </div>
       </div>
-      <nav className="flex flex-col px-6 py-8">
+
+      {/* Navigation */}
+      <nav className="flex flex-col space-y-2 px-4 py-4">
         <NavLink
           to="/dashboard"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
-          <HiOutlineHome className="mr-3 text-2xl" />
-          Dashboard
+          {({ isActive }) => (
+            <>
+              <HiOutlineHome
+                className={`mr-3 text-xl transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 group-hover:text-blue-500"
+                }`}
+              />
+              Dashboard
+            </>
+          )}
         </NavLink>
         <NavLink
           to="/users"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
-          <HiOutlineUsers className="mr-3 text-2xl" />
-          Users
+          {({ isActive }) => (
+            <>
+              <HiOutlineUsers
+                className={`mr-3 text-xl transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 group-hover:text-blue-500"
+                }`}
+              />
+              Users
+            </>
+          )}
         </NavLink>
         <NavLink
           to="/bookings"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
-          <HiOutlineCalendarDays className="mr-3 text-2xl" />
-          Bookings
+          {({ isActive }) => (
+            <>
+              <HiOutlineCalendarDays
+                className={`mr-3 text-xl transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 group-hover:text-blue-500"
+                }`}
+              />
+              Bookings
+            </>
+          )}
         </NavLink>
         <NavLink
           to="/rooms"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
-          <HiOutlineHomeModern className="mr-3 text-2xl" />
-          Rooms
+          {({ isActive }) => (
+            <>
+              <HiOutlineHomeModern
+                className={`mr-3 text-xl transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 group-hover:text-blue-500"
+                }`}
+              />
+              Rooms
+            </>
+          )}
         </NavLink>
         <NavLink
           to="/invoices"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
-          <HiOutlineCash className="mr-3 text-2xl" />
-          Invoices
+          {({ isActive }) => (
+            <>
+              <HiOutlineCash
+                className={`mr-3 text-xl transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 group-hover:text-blue-500"
+                }`}
+              />
+              Invoices
+            </>
+          )}
         </NavLink>
         <NavLink
           to="/assets"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
-          <HiOutlineInboxStack className="mr-3 text-2xl" />
-          Assets
+          {({ isActive }) => (
+            <>
+              <HiOutlineInboxStack
+                className={`mr-3 text-xl transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 group-hover:text-blue-500"
+                }`}
+              />
+              Assets
+            </>
+          )}
         </NavLink>
         <NavLink
           to="/settings"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
-          <HiOutlineCog6Tooth className="mr-3 text-2xl" />
-          Settings
+          {({ isActive }) => (
+            <>
+              <HiOutlineCog6Tooth
+                className={`mr-3 text-xl transition-colors ${
+                  isActive
+                    ? "text-white"
+                    : "text-gray-500 group-hover:text-blue-500"
+                }`}
+              />
+              Settings
+            </>
+          )}
         </NavLink>
       </nav>
     </aside>
