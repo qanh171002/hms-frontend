@@ -470,7 +470,7 @@ function Rooms() {
 
 export default Rooms;
 
-function RoomCard({ room, onBookRoom, filters }) {
+function RoomCard({ room, onBookRoom }) {
   const navigate = useNavigate();
   const roomName = `Room ${String(room.roomNumber).padStart(3, "0")}`;
   const hourlyPrice = room.prices?.find((p) => p.priceType === "HOURLY");
@@ -489,7 +489,10 @@ function RoomCard({ room, onBookRoom, filters }) {
   };
 
   return (
-    <div className="relative flex min-h-[200px] flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition duration-300 hover:scale-[1.02] hover:shadow-lg">
+    <div
+      onClick={handleCardClick}
+      className="relative flex min-h-[200px] flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-md transition duration-300 hover:scale-[1.02] hover:shadow-lg"
+    >
       <div className="flex-1">
         <div className="mb-4">
           <h3 className="text-xl font-bold text-gray-800">{roomName}</h3>
@@ -523,13 +526,7 @@ function RoomCard({ room, onBookRoom, filters }) {
       </div>
 
       {/* Book Room Button */}
-      <div className="mt-4 flex gap-2">
-        <button
-          onClick={handleCardClick}
-          className="flex-1 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-        >
-          View Details
-        </button>
+      <div className="mt-4 flex justify-end gap-2">
         <button
           onClick={handleBookClick}
           className="flex cursor-pointer items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"

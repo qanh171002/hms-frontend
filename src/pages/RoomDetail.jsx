@@ -70,18 +70,11 @@ export default function RoomDetail() {
       : `1-${roomData.maxOccupancy} person${
           roomData.maxOccupancy > 1 ? "s" : ""
         }`
-    : "N/A";
+    : "_";
 
   const roomNumberFormatted = roomData.roomNumber
     ? String(roomData.roomNumber).padStart(3, "0")
     : roomData.roomNumber;
-
-  // const statusColor =
-  //   roomData.status === "Available"
-  //     ? "bg-blue-100 text-blue-500"
-  //     : roomData.status === "Reserved"
-  //     ? "bg-green-100 text-green-500"
-  //     : "bg-red-100 text-red-500";
 
   const handleEditRoom = (updatedRoom) => {
     setRoomData(updatedRoom);
@@ -119,8 +112,8 @@ export default function RoomDetail() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">Room Details</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className="text-2xl font-bold text-gray-800">Room Details</h1>
+          <p className="text-base text-gray-500">
             Complete information about this room
           </p>
         </div>
@@ -230,6 +223,15 @@ export default function RoomDetail() {
         >
           <FaTrash />
           Delete Room
+        </Button>
+        <Button
+          variation="secondary"
+          size="medium"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2"
+        >
+          <FaArrowLeft />
+          Back
         </Button>
       </div>
       <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>

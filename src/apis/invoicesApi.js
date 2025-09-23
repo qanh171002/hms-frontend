@@ -51,3 +51,56 @@ export const deleteInvoice = async (id) => {
     throw error;
   }
 };
+
+export const filterInvoices = async (filters, page = 0, size = 10) => {
+  try {
+    const filterParams = {};
+
+    if (filters.minAmount !== undefined && filters.minAmount !== "") {
+      filterParams.minAmount = parseFloat(filters.minAmount);
+    }
+    if (filters.maxAmount !== undefined && filters.maxAmount !== "") {
+      filterParams.maxAmount = parseFloat(filters.maxAmount);
+    }
+    if (filters.status && filters.status !== "") {
+      filterParams.status = filters.status;
+    }
+
+    if (filters.issuedDateFrom && filters.issuedDateFrom !== "") {
+      filterParams.issuedDateFrom = new Date(
+        `${filters.issuedDateFrom}T12:00:00`,
+      ).toISOString();
+    }
+    if (filters.issuedDateTo && filters.issuedDateTo !== "") {
+      filterParams.issuedDateTo = new Date(
+        `${filters.issuedDateTo}T11:59:59`,
+      ).toISOString();
+    }
+    if (filters.dueDateFrom && filters.dueDateFrom !== "") {
+      filterParams.dueDateFrom = new Date(
+        `${filters.dueDateFrom}T12:00:00`,
+      ).toISOString();
+    }
+    if (filters.dueDateTo && filters.dueDateTo !== "") {
+      filterParams.dueDateTo = new Date(
+        `${filters.dueDateTo}T11:59:59`,
+      ).toISOString();
+    }
+
+    if (filters.paymentMethod && filters.paymentMethod !== "") {
+      filterParams.paymentMethod = filters.paymentMethod;
+    }
+    if (filters.bookingId && String(filters.bookingId).trim() !== "") {
+      filterParams.bookingId = parseInt(filters.bookingId);
+    }
+
+    const response = await axios.post("/invoices/filter", filterParams, {
+      params: { page, size },
+    });
+    console.log("POST /invoices/filter response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error filtering invoices:", error);
+    throw error;
+  }
+};

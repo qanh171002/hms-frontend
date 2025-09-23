@@ -9,6 +9,7 @@ import {
   HiOutlineCreditCard,
   HiOutlineChatBubbleLeftRight,
 } from "react-icons/hi2";
+import { FaArrowLeft } from "react-icons/fa";
 function InvoiceDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function InvoiceDetail() {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "_";
     try {
       const d = new Date(dateString);
       return d.toLocaleString("vi-VN");
@@ -65,8 +66,8 @@ function InvoiceDetail() {
     <div className="w-full py-8">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-            Invoice <span className="text-blue-500">#{invoice.id}</span>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-800">
+            Invoice #{invoice.id}
           </h1>
           <span
             className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${
@@ -81,13 +82,13 @@ function InvoiceDetail() {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-lg font-semibold text-blue-600 hover:text-blue-800"
         >
-          <HiOutlineArrowLeft />
+          <FaArrowLeft />
           Back
         </button>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow">
-        <div className="flex flex-col justify-between gap-3 bg-blue-500 p-6 text-blue-100 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-3 bg-blue-500 p-6 text-blue-50 md:flex-row md:items-center">
           <div className="text-lg font-semibold">
             Booking #{invoice.bookingId}
           </div>
@@ -126,7 +127,7 @@ function InvoiceDetail() {
             <HiOutlineCreditCard className="text-2xl text-blue-500" />
             <span className="text-lg font-medium">Payment method</span>
             <span className="text-lg text-gray-700">
-              {invoice.paymentMethod || "N/A"}
+              {invoice.paymentMethod || "_"}
             </span>
           </div>
 

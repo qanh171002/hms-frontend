@@ -177,7 +177,7 @@ function Assets() {
   });
 
   const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "_";
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString("vi-VN");
@@ -191,14 +191,14 @@ function Assets() {
 
   return (
     <>
-      <div className="mb-8 flex flex-col items-center justify-between sm:flex-row">
-        <div>
+      <div className="grid grid-cols-4 gap-6">
+        <div className="col-span-2 mb-6 flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-gray-800">Hotel Assets</h2>
           <p className="text-base text-gray-500">
             Manage and track hotel assets and inventory.
           </p>
         </div>
-        <div className="mt-4 flex items-center gap-2 sm:mt-0">
+        <div className="col-span-2 flex items-center justify-end gap-2">
           <div className="flex items-center gap-2 rounded-md bg-gray-100 p-1">
             <FilterButton
               active={activeFilter === "All"}
@@ -235,8 +235,7 @@ function Assets() {
         </div>
       </div>
 
-      {/* Assets Table */}
-      <div className="rounded-lg bg-white shadow-md">
+      <div className="col-span-4 rounded-2xl bg-white p-6 shadow-md">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -320,7 +319,7 @@ function Assets() {
                     </td>
                     <td className="px-6 py-4 text-base text-gray-800">
                       <div className="max-w-xs truncate" title={asset.note}>
-                        {asset.note || "N/A"}
+                        {asset.note || "_"}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">

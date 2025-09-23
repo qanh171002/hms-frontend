@@ -14,7 +14,7 @@ import {
   FaArrowLeft,
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   getBookingById,
   updateBooking,
@@ -44,6 +44,8 @@ function BookingDetail() {
   const [countries, setCountries] = useState([]);
   const [flagLoaded, setFlagLoaded] = useState(false);
   const [invoiceId, setInvoiceId] = useState(null);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
+  const [hasSearchedForInvoice, setHasSearchedForInvoice] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -87,8 +89,13 @@ function BookingDetail() {
     setFlagLoaded(false);
   }, [booking?.guestNationality, countries]);
 
+  useEffect(() => {
+    setHasSearchedForInvoice(false);
+    setInvoiceId(null);
+  }, [booking?.id]);
+
   const formatDateTime = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "_";
     try {
       const date = new Date(dateString);
       return date.toLocaleString("en-US");
@@ -97,26 +104,41 @@ function BookingDetail() {
     }
   };
 
-  useEffect(() => {
-    const fetchInvoiceByBooking = async () => {
-      if (!booking?.id) return;
-      try {
-        const data = await getInvoices();
-        const list = data?.content || [];
-        const found = list.find((inv) => inv.bookingId === booking.id);
-        if (found?.id) setInvoiceId(found.id);
-      } catch (e) {
-        console.log(e);
-      }
-    };
+  const fetchInvoiceByBooking = useCallback(async () => {
+    if (!booking?.id) return;
+    try {
+      const data = await getInvoices();
+      const list = data?.content || [];
+      const found = list.find((inv) => inv.bookingId === booking.id);
+      if (found?.id) setInvoiceId(found.id);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [booking?.id]);
 
-    if (booking?.status === "Checked out" && !invoiceId) {
+  useEffect(() => {
+    if (
+      booking?.status === "Checked out" &&
+      !invoiceId &&
+      !isUpdating &&
+      !isCreatingInvoice &&
+      !hasSearchedForInvoice
+    ) {
+      setHasSearchedForInvoice(true);
       fetchInvoiceByBooking();
     }
-  }, [booking?.status, booking?.id, invoiceId]);
+  }, [
+    booking?.status,
+    booking?.id,
+    invoiceId,
+    isUpdating,
+    isCreatingInvoice,
+    hasSearchedForInvoice,
+    fetchInvoiceByBooking,
+  ]);
 
   const formatWeekdayDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "_";
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString("en-US", {
@@ -131,7 +153,7 @@ function BookingDetail() {
   };
 
   const formatWeekdayDateTime = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "_";
     try {
       const date = new Date(dateString);
       return date.toLocaleString("en-US", {
@@ -277,17 +299,24 @@ function BookingDetail() {
         paymentMethod: "",
         notes: "",
       };
-      const createdInvoice = await createInvoice(invoiceData);
-      setInvoiceId(createdInvoice?.id || null);
 
-      if (roomId) {
-        toast.success(
-          `Check-out successful! Invoice #${createdInvoice.id} created!`,
-        );
-      } else {
-        toast.success(
-          `Check-out successful! Invoice #${createdInvoice.id} created!`,
-        );
+      try {
+        setIsCreatingInvoice(true);
+        setHasSearchedForInvoice(true);
+        const createdInvoice = await createInvoice(invoiceData);
+        if (createdInvoice?.id) {
+          setInvoiceId(createdInvoice.id);
+          toast.success(
+            `Check-out successful! Invoice #${createdInvoice.id} created!`,
+          );
+        } else {
+          toast.error("Invoice created but no ID returned");
+        }
+      } catch (invoiceError) {
+        console.error("Error creating invoice:", invoiceError);
+        toast.error("Check-out successful but failed to create invoice");
+      } finally {
+        setIsCreatingInvoice(false);
       }
     } catch (err) {
       console.error("Error checking out:", err);
@@ -416,8 +445,8 @@ function BookingDetail() {
     <div className="w-full py-8">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-            Booking <span className="text-blue-500">#{booking.id}</span>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-800">
+            Booking #{booking.id}
           </h1>
           <span
             className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${
@@ -448,7 +477,7 @@ function BookingDetail() {
               {booking.bookingType?.toUpperCase() === "HOURLY"
                 ? "hours"
                 : "nights"}{" "}
-              in Cabin {booking.roomNumber ?? "N/A"}
+              in Cabin {booking.roomNumber ?? "_"}
             </span>
           </div>
 
@@ -637,7 +666,11 @@ function BookingDetail() {
             className="flex items-center gap-2"
           >
             <FaFileInvoice />
-            {invoiceId ? "Check invoice" : "Finding invoice..."}
+            {invoiceId
+              ? "Check invoice"
+              : isCreatingInvoice
+                ? "Creating invoice..."
+                : "Finding invoice..."}
           </Button>
         )}
         <Button

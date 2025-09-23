@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "./Button";
 import SpinnerMini from "./SpinnerMini";
+import { getHotelInfo } from "../apis/hotelApi";
 
 function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
   const [formData, setFormData] = useState({
@@ -12,9 +13,40 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
     hourlyPrice: "",
     dailyPrice: "",
   });
+  const [numberOfFloors, setNumberOfFloors] = useState(5);
+  const [isLoadingFloors, setIsLoadingFloors] = useState(true);
 
   const inputClass =
     "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
+
+  useEffect(() => {
+    const fetchHotelInfo = async () => {
+      try {
+        const hotelData = await getHotelInfo();
+        setNumberOfFloors(hotelData.numberOfFloors || 5);
+      } catch (err) {
+        console.error("Error fetching hotel info:", err);
+      } finally {
+        setIsLoadingFloors(false);
+      }
+    };
+
+    fetchHotelInfo();
+  }, []);
+
+  const generateFloorOptions = () => {
+    const options = [];
+    for (let i = 1; i <= numberOfFloors; i++) {
+      const suffix = i === 1 ? "st" : i === 2 ? "nd" : i === 3 ? "rd" : "th";
+      options.push(
+        <option key={i} value={`${i}${suffix} floor`}>
+          {i}
+          {suffix} floor
+        </option>,
+      );
+    }
+    return options;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,14 +162,16 @@ function AddRoomForm({ onSubmit, isSubmitting, onClose }) {
               onChange={handleChange}
               className={inputClass}
               required
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingFloors}
             >
               <option value="">Select location</option>
-              <option value="1st floor">1st floor</option>
-              <option value="2nd floor">2nd floor</option>
-              <option value="3rd floor">3rd floor</option>
-              <option value="4th floor">4th floor</option>
-              <option value="5th floor">5th floor</option>
+              {isLoadingFloors ? (
+                <option value="" disabled>
+                  Loading floors...
+                </option>
+              ) : (
+                generateFloorOptions()
+              )}
             </select>
           </div>
 

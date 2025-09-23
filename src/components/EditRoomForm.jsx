@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import { updateRoom } from "../apis/roomsApi";
+import { getHotelInfo } from "../apis/hotelApi";
 import toast from "react-hot-toast";
 import SpinnerMini from "./SpinnerMini";
 
@@ -11,12 +12,42 @@ function EditRoomForm({ room, onSubmit, onClose }) {
     roomNumber: room.roomNumber || "",
     maxOccupancy: room.maxOccupancy || "",
     roomType: room.roomType || "",
-    // status: room.status || "Available",
     location: room.location || "",
     hourlyPrice: hourly ? hourly.basePrice : "",
     dailyPrice: daily ? daily.basePrice : "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [numberOfFloors, setNumberOfFloors] = useState(5);
+  const [isLoadingFloors, setIsLoadingFloors] = useState(true);
+
+  useEffect(() => {
+    const fetchHotelInfo = async () => {
+      try {
+        const hotelData = await getHotelInfo();
+        setNumberOfFloors(hotelData.numberOfFloors || 5);
+      } catch (err) {
+        console.error("Error fetching hotel info:", err);
+      } finally {
+        setIsLoadingFloors(false);
+      }
+    };
+
+    fetchHotelInfo();
+  }, []);
+
+  const generateFloorOptions = () => {
+    const options = [];
+    for (let i = 1; i <= numberOfFloors; i++) {
+      const suffix = i === 1 ? "st" : i === 2 ? "nd" : i === 3 ? "rd" : "th";
+      options.push(
+        <option key={i} value={`${i}${suffix} floor`}>
+          {i}
+          {suffix} floor
+        </option>,
+      );
+    }
+    return options;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +72,6 @@ function EditRoomForm({ room, onSubmit, onClose }) {
         roomNumber: Number(formData.roomNumber),
         maxOccupancy: Number(formData.maxOccupancy),
         roomType: formData.roomType,
-        // status: formData.status,
         location: formData.location,
         prices,
       };
@@ -152,14 +182,16 @@ function EditRoomForm({ room, onSubmit, onClose }) {
               onChange={handleChange}
               className={inputClass}
               required
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingFloors}
             >
               <option value="">Select location</option>
-              <option value="1st floor">1st floor</option>
-              <option value="2nd floor">2nd floor</option>
-              <option value="3rd floor">3rd floor</option>
-              <option value="4th floor">4th floor</option>
-              <option value="5th floor">5th floor</option>
+              {isLoadingFloors ? (
+                <option value="" disabled>
+                  Loading floors...
+                </option>
+              ) : (
+                generateFloorOptions()
+              )}
             </select>
           </div>
           <div>

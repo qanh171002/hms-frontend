@@ -59,8 +59,6 @@ function EditInvoiceForm({ onSubmit, isSubmitting, onClose, invoice }) {
     e.preventDefault();
 
     const apiInvoice = {
-      // bookingId: Number(formData.bookingId),
-      // amount: Number(formData.amount),
       paidAmount: Number(formData.paidAmount) || 0,
       status: formData.status,
       issuedDate: formatDateForAPI(formData.issuedDate),

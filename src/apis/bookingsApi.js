@@ -86,3 +86,72 @@ export const deleteBooking = async (id) => {
     throw error;
   }
 };
+
+export const filterBookings = async (filters, page = 0, size = 10) => {
+  try {
+    const filterParams = {};
+
+    if (filters.guestFullName && filters.guestFullName !== "") {
+      filterParams.guestFullName = filters.guestFullName;
+    }
+    if (filters.guestIdNumber && filters.guestIdNumber !== "") {
+      filterParams.guestIdNumber = filters.guestIdNumber;
+    }
+    if (filters.guestNationality && filters.guestNationality !== "") {
+      filterParams.guestNationality = filters.guestNationality;
+    }
+    if (filters.roomId && String(filters.roomId).trim() !== "") {
+      filterParams.roomId = parseInt(filters.roomId);
+    }
+
+    if (filters.checkInDateFrom && filters.checkInDateFrom !== "") {
+      filterParams.checkInDateFrom = new Date(
+        `${filters.checkInDateFrom}T12:00:00`,
+      ).toISOString();
+    }
+    if (filters.checkInDateTo && filters.checkInDateTo !== "") {
+      filterParams.checkInDateTo = new Date(
+        `${filters.checkInDateTo}T11:59:59`,
+      ).toISOString();
+    }
+    if (filters.checkOutDateFrom && filters.checkOutDateFrom !== "") {
+      filterParams.checkOutDateFrom = new Date(
+        `${filters.checkOutDateFrom}T12:00:00`,
+      ).toISOString();
+    }
+    if (filters.checkOutDateTo && filters.checkOutDateTo !== "") {
+      filterParams.checkOutDateTo = new Date(
+        `${filters.checkOutDateTo}T11:59:59`,
+      ).toISOString();
+    }
+
+    if (filters.bookingType && filters.bookingType !== "") {
+      filterParams.bookingType = filters.bookingType;
+    }
+    if (filters.status && filters.status !== "") {
+      filterParams.status = filters.status;
+    }
+
+    if (
+      filters.numberOfGuestsMin !== undefined &&
+      filters.numberOfGuestsMin !== ""
+    ) {
+      filterParams.numberOfGuestsMin = parseInt(filters.numberOfGuestsMin);
+    }
+    if (
+      filters.numberOfGuestsMax !== undefined &&
+      filters.numberOfGuestsMax !== ""
+    ) {
+      filterParams.numberOfGuestsMax = parseInt(filters.numberOfGuestsMax);
+    }
+
+    const response = await apiClient.post("/bookings/filter", filterParams, {
+      params: { page, size },
+    });
+    console.log("POST /bookings/filter response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error filtering bookings:", error);
+    throw error;
+  }
+};
