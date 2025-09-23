@@ -164,6 +164,20 @@ function Sidebar() {
           )}
         </NavLink>
         <NavLink
+          to="/promotions"
+          className={({ isActive }) =>
+            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+              isActive
+                ? "bg-blue-500 text-white"
+                : "text-gray-600 hover:bg-gray-100"
+            }`
+          }
+        >
+          <HiOutlineInboxStack className="mr-3 text-2xl" />
+          Promotions
+        </NavLink>
+
+        <NavLink
           to="/settings"
           className={({ isActive }) =>
             `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${

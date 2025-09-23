@@ -22,6 +22,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import RoomDetail from "./pages/RoomDetail";
 import BookingDetail from "./pages/BookingDetail";
 import InvoiceDetail from "./pages/InvoiceDetail";
+import Promotions from "./pages/Promotions";
 
 function AppLayout() {
   return (
@@ -65,6 +66,7 @@ function App() {
               <Route path="/assets" element={<Assets />} />
               <Route path="/invoices" element={<Invoices />} />
               <Route path="/invoices/:id" element={<InvoiceDetail />} />
+              <Route path="/promotions" element={<Promotions />} />
             </Route>
 
             <Route path="/login" element={<Login />} />
