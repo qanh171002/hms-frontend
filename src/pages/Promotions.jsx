@@ -7,10 +7,12 @@ import {
 } from "../apis/promotionApi";
 import { HiPencil, HiTrash } from "react-icons/hi";
 import Modal from "../components/Modal";
+import ConfirmModal from "../components/ConfirmModal";
 import AddPromotionForm from "../components/AddPromotionForm";
 import EditPromotionForm from "../components/EditPromotionForm";
 import Spinner from "../components/Spinner";
 import Button from "../components/Button";
+import toast from "react-hot-toast";
 
 function Promotions() {
   const [promotions, setPromotions] = useState([]);
@@ -22,6 +24,7 @@ function Promotions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -46,17 +49,16 @@ function Promotions() {
   const PER_PAGE = 10;
   const pagePromotions = promotions;
 
-  const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
-  const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
-
   const handleAddPromotion = async (newPromo) => {
     try {
       setIsSubmitting(true);
       const created = await createPromotion(newPromo);
       setPromotions((prev) => [...prev, created]);
       setIsModalOpen(false);
+      toast.success("Promotion created successfully!");
     } catch (err) {
       console.error("Error creating promotion:", err);
+      toast.error("Failed to create promotion!");
     } finally {
       setIsSubmitting(false);
     }
@@ -71,21 +73,30 @@ function Promotions() {
       );
       setIsEditModalOpen(false);
       setEditingPromotion(null);
+      toast.success("Promotion updated successfully!");
     } catch (err) {
       console.error("Error updating promotion:", err);
+      toast.error("Failed to update promotion!");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDeletePromotion = async (id) => {
-    if (window.confirm("Are you sure you want to delete this promotion?")) {
-      try {
-        await deletePromotion(id);
-        setPromotions((prev) => prev.filter((p) => p.id !== id));
-      } catch (err) {
-        console.error("Error deleting promotion:", err);
-      }
+    setConfirmDeleteId(id);
+  };
+
+  const confirmDeletePromotion = async () => {
+    try {
+      const id = confirmDeleteId;
+      if (!id) return;
+      await deletePromotion(id);
+      setPromotions((prev) => prev.filter((p) => p.id !== id));
+      setConfirmDeleteId(null);
+      toast.success("Promotion deleted successfully!");
+    } catch (err) {
+      console.error("Error deleting promotion:", err);
+      toast.error("Failed to delete promotion!");
     }
   };
 
@@ -96,19 +107,19 @@ function Promotions() {
 
   return (
     <>
-      <div className="mb-8 flex flex-col items-center justify-between sm:flex-row">
-        <div>
+      <div className="grid grid-cols-4 gap-6">
+        <div className="col-span-2 mb-6 flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-gray-800">Promotions</h2>
           <p className="text-base text-gray-500">
             Manage hotel promotions and discounts.
           </p>
         </div>
-        <div className="mt-4 flex items-center gap-2 sm:mt-0">
+        <div className="col-span-2 flex items-center justify-end gap-2">
           <Button onClick={() => setIsModalOpen(true)}>Add Promotion</Button>
         </div>
       </div>
 
-      <div className="rounded-lg bg-white shadow-md">
+      <div className="col-span-4 rounded-2xl bg-white p-6 shadow-md">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -253,6 +264,17 @@ function Promotions() {
           promotion={editingPromotion}
         />
       </Modal>
+
+      <ConfirmModal
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={confirmDeletePromotion}
+        title="Delete promotion"
+        message="Are you sure you want to delete this promotion? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variation="danger"
+      />
     </>
   );
 }

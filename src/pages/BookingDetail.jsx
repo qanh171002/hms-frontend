@@ -593,24 +593,6 @@ function BookingDetail() {
             </div>
           )}
 
-          {/* Total price banner */}
-          <div className="mt-4">
-            <div className="flex items-center justify-between rounded-lg border border-yellow-100 bg-yellow-50 px-5 py-4">
-              <div className="flex items-center gap-2 text-yellow-800">
-                <HiOutlineCurrencyDollar className="text-2xl" />
-                <span className="text-lg font-semibold">Total price</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-2xl font-bold text-yellow-900">
-                  $0.00
-                </span>
-                <span className="rounded-full border border-yellow-200 bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800">
-                  WILL PAY AT PROPERTY
-                </span>
-              </div>
-            </div>
-          </div>
-
           {/* Footer booked time */}
           {booking.createdAt && (
             <div className="pt-2 text-right text-xs text-gray-500">

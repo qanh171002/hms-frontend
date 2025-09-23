@@ -166,10 +166,10 @@ function Sidebar() {
         <NavLink
           to="/promotions"
           className={({ isActive }) =>
-            `my-2 flex items-center rounded-lg px-4 py-3 text-base font-medium transition duration-100 ease-in-out ${
+            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
               isActive
-                ? "bg-blue-500 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
             }`
           }
         >
