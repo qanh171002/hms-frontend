@@ -238,7 +238,12 @@ function Users() {
               Accountant
             </FilterButton>
           </div>
-          <Button onClick={() => setIsModalOpen(true)}>Add User</Button>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="whitespace-nowrap"
+          >
+            Add User
+          </Button>
         </div>
       </div>
 

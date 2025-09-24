@@ -529,7 +529,7 @@ function RoomCard({ room, onBookRoom }) {
       <div className="mt-4 flex justify-end gap-2">
         <button
           onClick={handleBookClick}
-          className="flex cursor-pointer items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+          className="flex cursor-pointer items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium whitespace-nowrap text-white transition-colors hover:bg-blue-600"
         >
           <FaCalendarPlus className="h-4 w-4" />
           Book Now

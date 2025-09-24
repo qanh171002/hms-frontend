@@ -237,34 +237,34 @@ function Assets() {
 
       <div className="col-span-4 rounded-2xl bg-white p-6 shadow-md">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Asset ID
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Name
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell">
                   Category
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell">
                   Room Number
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Condition
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                   Original Cost
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase xl:table-cell">
                   Purchase Date
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase xl:table-cell">
                   Note
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"></th>
+                <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
@@ -289,21 +289,21 @@ function Assets() {
               ) : (
                 pageAssets.map((asset) => (
                   <tr key={asset.id}>
-                    <td className="px-6 py-4 text-base font-medium whitespace-nowrap text-gray-900">
+                    <td className="px-3 py-4 text-base font-medium whitespace-nowrap text-gray-900">
                       <div className="font-semibold">#{asset.id}</div>
                     </td>
-                    <td className="px-6 py-4 text-base font-medium whitespace-nowrap text-gray-900">
+                    <td className="px-3 py-4 text-base font-medium whitespace-nowrap text-gray-900">
                       <div className="font-semibold">{asset.name}</div>
                     </td>
-                    <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
+                    <td className="hidden px-3 py-4 text-base whitespace-nowrap text-gray-800 sm:table-cell">
                       {asset.category}
                     </td>
-                    <td className="px-6 py-4 text-base font-semibold whitespace-nowrap text-gray-800">
+                    <td className="hidden px-3 py-4 text-base font-semibold whitespace-nowrap text-gray-800 md:table-cell">
                       {asset.roomNumber}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-base leading-5 font-semibold ${
+                        className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${
                           conditionStyles[asset.condition] ||
                           "bg-gray-100 text-gray-700"
                         }`}
@@ -311,18 +311,18 @@ function Assets() {
                         {asset.condition}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
-                      {asset.originalCost}
+                    <td className="hidden px-3 py-4 text-base whitespace-nowrap text-gray-800 lg:table-cell">
+                      ${asset.originalCost}
                     </td>
-                    <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
+                    <td className="hidden px-3 py-4 text-base whitespace-nowrap text-gray-800 xl:table-cell">
                       {formatDate(asset.purchaseDate)}
                     </td>
-                    <td className="px-6 py-4 text-base text-gray-800">
+                    <td className="hidden px-3 py-4 text-base text-gray-800 xl:table-cell">
                       <div className="max-w-xs truncate" title={asset.note}>
                         {asset.note || "_"}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
+                    <td className="px-3 py-4 text-right text-sm font-medium whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           className="rounded-full p-2 text-green-600 hover:bg-green-50 hover:text-green-700"

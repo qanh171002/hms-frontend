@@ -452,34 +452,34 @@ function Invoices() {
         {/* Invoices Table */}
         <div className="rounded-lg bg-white shadow-md">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Invoice ID
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:table-cell">
                     Booking ID
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Amount
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell">
                     Paid Amount
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                     Issued Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                     Due Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                  <th className="hidden px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase xl:table-cell">
                     Payment Method
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"></th>
+                  <th className="px-3 py-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -514,21 +514,21 @@ function Invoices() {
                 ) : (
                   pageInvoices.map((invoice) => (
                     <tr key={invoice.id}>
-                      <td className="px-6 py-4 text-base font-medium whitespace-nowrap text-gray-900">
+                      <td className="px-3 py-4 text-base font-medium whitespace-nowrap text-gray-900">
                         <div className="font-semibold">#{invoice.id}</div>
                       </td>
-                      <td className="px-6 py-4 text-base font-semibold whitespace-nowrap text-gray-800">
+                      <td className="hidden px-3 py-4 text-base font-semibold whitespace-nowrap text-gray-800 sm:table-cell">
                         {invoice.bookingId}
                       </td>
-                      <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
-                        {invoice.amount}
+                      <td className="px-3 py-4 text-base whitespace-nowrap text-gray-800">
+                        ${invoice.amount}
                       </td>
-                      <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
-                        {invoice.paidAmount}
+                      <td className="hidden px-3 py-4 text-base whitespace-nowrap text-gray-800 md:table-cell">
+                        ${invoice.paidAmount}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex rounded-full px-3 py-1 text-base leading-5 font-semibold ${
+                          className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${
                             statusStyles[invoice.status] ||
                             "bg-gray-100 text-gray-700"
                           }`}
@@ -536,16 +536,16 @@ function Invoices() {
                           {invoice.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
+                      <td className="hidden px-3 py-4 text-base whitespace-nowrap text-gray-800 lg:table-cell">
                         {formatDateTime(invoice.issuedDate)}
                       </td>
-                      <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
+                      <td className="hidden px-3 py-4 text-base whitespace-nowrap text-gray-800 lg:table-cell">
                         {formatDateTime(invoice.dueDate)}
                       </td>
-                      <td className="px-6 py-4 text-base whitespace-nowrap text-gray-800">
-                        {invoice.paymentMethod || "N/A"}
+                      <td className="hidden px-3 py-4 text-base whitespace-nowrap text-gray-800 xl:table-cell">
+                        {invoice.paymentMethod || "_"}
                       </td>
-                      <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
+                      <td className="px-3 py-4 text-right text-sm font-medium whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
                           <button
                             className="rounded-full p-2 text-green-600 hover:bg-green-50 hover:text-green-700"
