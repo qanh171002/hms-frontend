@@ -24,10 +24,8 @@ const roleStyles = {
 const FilterButton = ({ active, children, onClick }) => (
   <button
     onClick={onClick}
-    className={`rounded-md px-4 py-2 text-sm font-medium ${
-      active
-        ? "bg-blue-500 text-white"
-        : "bg-white text-gray-700 hover:bg-gray-50"
+    className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+      active ? "bg-blue-500 text-white" : "text-gray-600 hover:text-gray-800"
     }`}
   >
     {children}
@@ -206,7 +204,7 @@ function Users() {
           </p>
         </div>
         <div className="col-span-2 flex items-center justify-end gap-2">
-          <div className="flex items-center gap-2 rounded-md bg-gray-100 p-1">
+          <div className="flex items-center gap-2 rounded-lg bg-gray-100 p-1">
             <FilterButton
               active={activeFilter === "All"}
               onClick={() => handleFilterChange("All")}
