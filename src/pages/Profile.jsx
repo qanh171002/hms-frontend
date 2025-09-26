@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { updateUserProfile } from "../apis/usersApi";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import Button from "../components/Button";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";

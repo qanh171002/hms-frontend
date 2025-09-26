@@ -1,20 +1,13 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import { login, logout, isAuthenticated } from "../apis/authApi";
 import {
   getCurrentUser,
   updateUserProfile as updateUserProfileAPI,
 } from "../apis/usersApi";
 import toast from "react-hot-toast";
+import { getPrimaryRole, hasRole, hasAnyRole } from "../helpers/roleUtils";
 
 const AuthContext = createContext();
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
 
 export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -103,6 +96,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Create bound helper functions
+  const boundGetPrimaryRole = () => getPrimaryRole(user);
+  const boundHasRole = (role) => hasRole(user, role);
+  const boundHasAnyRole = (roles) => hasAnyRole(user, roles);
+
   const value = {
     isLoggedIn,
     loading,
@@ -111,7 +109,12 @@ export const AuthProvider = ({ children }) => {
     logoutUser,
     updateUserProfile,
     refreshUserData: checkAuthStatus,
+    getPrimaryRole: boundGetPrimaryRole,
+    hasRole: boundHasRole,
+    hasAnyRole: boundHasAnyRole,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export { AuthContext };

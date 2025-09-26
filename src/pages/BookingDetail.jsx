@@ -29,10 +29,10 @@ import Button from "../components/Button";
 import ConfirmModal from "../components/ConfirmModal";
 
 const statusStyles = {
-  "Checked in": "bg-green-100 text-green-600",
-  "Checked out": "bg-gray-100 text-gray-600",
-  Unconfirmed: "bg-blue-100 text-blue-600",
-  Cancelled: "bg-red-100 text-red-600",
+  "CHECKED IN": "bg-green-100 text-green-600",
+  "CHECKED OUT": "bg-gray-100 text-gray-600",
+  UNCONFIRMED: "bg-blue-100 text-blue-600",
+  CANCELLED: "bg-red-100 text-red-600",
 };
 
 function BookingDetail() {
@@ -118,7 +118,7 @@ function BookingDetail() {
 
   useEffect(() => {
     if (
-      booking?.status === "Checked out" &&
+      booking?.status === "CHECKED OUT" &&
       !invoiceId &&
       !isUpdating &&
       !isCreatingInvoice &&
@@ -236,7 +236,7 @@ function BookingDetail() {
       const now = new Date().toISOString();
       const updatedBooking = {
         ...booking,
-        status: "Checked in",
+        status: "CHECKED IN",
         actualCheckInTime: now,
       };
 
@@ -277,7 +277,7 @@ function BookingDetail() {
       const now = new Date().toISOString();
       const updatedBooking = {
         ...booking,
-        status: "Checked out",
+        status: "CHECKED OUT",
         actualCheckOutTime: now,
       };
 
@@ -293,7 +293,7 @@ function BookingDetail() {
         bookingId: booking.id,
         amount: 0,
         paidAmount: 0,
-        status: "Pending",
+        status: "PENDING",
         issuedDate: now,
         dueDate: "",
         paymentMethod: "",
@@ -352,7 +352,7 @@ function BookingDetail() {
       setIsUpdating(true);
       const updatedBooking = {
         ...booking,
-        status: "Cancelled",
+        status: "CANCELLED",
         cancelReason: String(reason || "").trim(),
       };
 
@@ -450,7 +450,7 @@ function BookingDetail() {
           </h1>
           <span
             className={`rounded-full px-3 py-1 text-xs font-semibold uppercase ${
-              statusStyles[booking.status] || statusStyles.Unconfirmed
+              statusStyles[booking.status] || statusStyles.UNCONFIRMED
             }`}
           >
             {booking.status}
@@ -604,7 +604,7 @@ function BookingDetail() {
 
       {/* Actions */}
       <div className="mt-8 flex flex-wrap justify-end gap-4">
-        {booking.status === "Unconfirmed" && (
+        {booking.status === "UNCONFIRMED" && (
           <>
             <Button
               size="medium"
@@ -628,7 +628,7 @@ function BookingDetail() {
           </>
         )}
 
-        {booking.status === "Checked in" && (
+        {booking.status === "CHECKED IN" && (
           <Button
             size="medium"
             onClick={handleCheckOut}
@@ -640,7 +640,7 @@ function BookingDetail() {
           </Button>
         )}
 
-        {booking.status === "Checked out" && (
+        {booking.status === "CHECKED OUT" && (
           <Button
             size="medium"
             onClick={() => navigate(`/invoices/${invoiceId}`)}

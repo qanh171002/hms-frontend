@@ -271,22 +271,36 @@ function Dashboard() {
               <span>Bookings</span>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={bookingsPerDayData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="date" stroke="#666" />
-              <YAxis stroke="#666" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
-              />
-              <Bar dataKey="bookings" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {bookingsPerDayData.length === 0 ? (
+            <div className="flex h-[300px] flex-col items-center justify-center text-center">
+              <div className="mb-4 rounded-full bg-blue-100 p-4">
+                <HiOutlineCalendar className="h-8 w-8 text-blue-600" />
+              </div>
+              <h4 className="mb-2 text-lg font-medium text-gray-700">
+                No booking data for this period
+              </h4>
+              <p className="text-sm text-gray-500">
+                Create bookings to see daily trends
+              </p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={bookingsPerDayData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="date" stroke="#666" />
+                <YAxis stroke="#666" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Bar dataKey="bookings" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         {/* Daily Revenue Chart */}
@@ -300,30 +314,44 @@ function Dashboard() {
               <span>Revenue</span>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={dailyRevenueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="date" stroke="#666" />
-              <YAxis stroke="#666" />
-              <Tooltip
-                formatter={(value) => formatCurrency(value)}
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                stroke="#10B981"
-                strokeWidth={3}
-                dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, stroke: "#10B981", strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {dailyRevenueData.length === 0 ? (
+            <div className="flex h-[300px] flex-col items-center justify-center text-center">
+              <div className="mb-4 rounded-full bg-green-100 p-4">
+                <HiOutlineCurrencyDollar className="h-8 w-8 text-green-600" />
+              </div>
+              <h4 className="mb-2 text-lg font-medium text-gray-700">
+                No revenue data for this period
+              </h4>
+              <p className="text-sm text-gray-500">
+                Complete bookings to generate revenue
+              </p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dailyRevenueData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="date" stroke="#666" />
+                <YAxis stroke="#666" />
+                <Tooltip
+                  formatter={(value) => formatCurrency(value)}
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#10B981"
+                  strokeWidth={3}
+                  dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, stroke: "#10B981", strokeWidth: 2 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         {/* Bookings by Status */}
@@ -336,40 +364,54 @@ function Dashboard() {
               {bookingsPerStatusData.length} statuses
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={bookingsPerStatusData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={false}
-                outerRadius={100}
-                innerRadius={65}
-                fill="#8884d8"
-                dataKey="count"
-                paddingAngle={2}
-              >
-                {bookingsPerStatusData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomPieTooltip />} />
-              <Legend
-                verticalAlign="middle"
-                align="right"
-                layout="vertical"
-                formatter={(value, entry) => (
-                  <span style={{ color: "#374151", fontSize: "14px" }}>
-                    {entry.payload.status}
-                  </span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          {bookingsPerStatusData.length === 0 ? (
+            <div className="flex h-[300px] flex-col items-center justify-center text-center">
+              <div className="mb-4 rounded-full bg-purple-100 p-4">
+                <HiOutlineCalendar className="h-8 w-8 text-purple-600" />
+              </div>
+              <h4 className="mb-2 text-lg font-medium text-gray-700">
+                No booking data available
+              </h4>
+              <p className="text-sm text-gray-500">
+                Create your first booking to see status distribution
+              </p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={bookingsPerStatusData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={false}
+                  outerRadius={100}
+                  innerRadius={65}
+                  fill="#8884d8"
+                  dataKey="count"
+                  paddingAngle={2}
+                >
+                  {bookingsPerStatusData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomPieTooltip />} />
+                <Legend
+                  verticalAlign="middle"
+                  align="right"
+                  layout="vertical"
+                  formatter={(value, entry) => (
+                    <span style={{ color: "#374151", fontSize: "14px" }}>
+                      {entry.payload.status}
+                    </span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         {/* Invoices by Status */}
@@ -382,40 +424,55 @@ function Dashboard() {
               {invoicesPerStatusData.length} statuses
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={invoicesPerStatusData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={false}
-                outerRadius={100}
-                innerRadius={65}
-                fill="#8884d8"
-                dataKey="count"
-                paddingAngle={2}
-              >
-                {invoicesPerStatusData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomPieTooltip />} />
-              <Legend
-                verticalAlign="middle"
-                align="right"
-                layout="vertical"
-                formatter={(value, entry) => (
-                  <span style={{ color: "#374151", fontSize: "14px" }}>
-                    {entry.payload.status}
-                  </span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+          {invoicesPerStatusData.length === 0 ? (
+            <div className="flex h-[300px] flex-col items-center justify-center text-center">
+              <div className="mb-4 rounded-full bg-orange-100 p-4">
+                <HiOutlineCurrencyDollar className="h-8 w-8 text-orange-600" />
+              </div>
+              <h4 className="mb-2 text-lg font-medium text-gray-700">
+                No invoice data available
+              </h4>
+              <p className="text-sm text-gray-500">
+                Check out bookings to generate invoices and see status
+                distribution
+              </p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={invoicesPerStatusData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={false}
+                  outerRadius={100}
+                  innerRadius={65}
+                  fill="#8884d8"
+                  dataKey="count"
+                  paddingAngle={2}
+                >
+                  {invoicesPerStatusData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomPieTooltip />} />
+                <Legend
+                  verticalAlign="middle"
+                  align="right"
+                  layout="vertical"
+                  formatter={(value, entry) => (
+                    <span style={{ color: "#374151", fontSize: "14px" }}>
+                      {entry.payload.status}
+                    </span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 

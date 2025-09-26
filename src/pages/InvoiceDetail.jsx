@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getInvoiceById } from "../apis/invoicesApi";
+import { getInvoiceById, downloadInvoicePDF } from "../apis/invoicesApi";
 import Spinner from "../components/Spinner";
 import {
   HiOutlineArrowLeft,
@@ -8,17 +8,22 @@ import {
   HiOutlineCurrencyDollar,
   HiOutlineCreditCard,
   HiOutlineChatBubbleLeftRight,
+  HiOutlineDocumentArrowDown,
 } from "react-icons/hi2";
 import { FaArrowLeft } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
+import toast from "react-hot-toast";
+import Button from "../components/Button";
 function InvoiceDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const statusStyles = {
-    Pending: "bg-yellow-100 text-yellow-700",
-    Paid: "bg-green-100 text-green-700",
+    PENDING: "bg-yellow-100 text-yellow-700",
+    PAID: "bg-green-100 text-green-700",
   };
 
   const formatDate = (dateString) => {
@@ -28,6 +33,19 @@ function InvoiceDetail() {
       return d.toLocaleString("vi-VN");
     } catch {
       return "Invalid Date";
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    try {
+      setIsDownloading(true);
+      await downloadInvoicePDF(id);
+      toast.success("Invoice PDF downloaded successfully!");
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      toast.error("Failed to download PDF. Please try again.");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -139,6 +157,29 @@ function InvoiceDetail() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-8 flex flex-wrap justify-end gap-4">
+        <Button
+          size="medium"
+          onClick={handleDownloadPDF}
+          disabled={isDownloading}
+          className="flex items-center gap-2"
+        >
+          <FaFilePdf />
+          {isDownloading ? "Downloading..." : "Download PDF"}
+        </Button>
+
+        <Button
+          variation="secondary"
+          size="medium"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2"
+        >
+          <FaArrowLeft />
+          Back
+        </Button>
       </div>
     </div>
   );

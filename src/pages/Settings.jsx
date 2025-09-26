@@ -3,6 +3,7 @@ import Button from "../components/Button";
 import { getHotelInfo, updateHotelInfo } from "../apis/hotelApi";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
+import { useAuth } from "../hooks/useAuth";
 import {
   FaBuilding,
   FaMapMarkerAlt,
@@ -15,6 +16,7 @@ import {
 } from "react-icons/fa";
 
 function Settings() {
+  const { hasAnyRole } = useAuth();
   const [hotelInfo, setHotelInfo] = useState({
     name: "",
     address: "",
@@ -27,6 +29,8 @@ function Settings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  const canUpdate = hasAnyRole(["ADMIN"]);
 
   useEffect(() => {
     const fetchHotelInfo = async () => {
@@ -109,33 +113,45 @@ function Settings() {
         </p>
       </div>
       <div className="col-span-2 flex items-center justify-end gap-3">
-        {!isEditing ? (
-          <Button
-            onClick={() => setIsEditing(true)}
-            variation="primary"
-            className="flex items-center gap-2 rounded-xl px-6 py-3 shadow-lg transition-all duration-300 hover:shadow-xl"
-          >
-            <FaEdit className="h-4 w-4" />
-            Edit Settings
-          </Button>
+        {canUpdate ? (
+          !isEditing ? (
+            <Button
+              size="medium"
+              className="flex items-center gap-2"
+              onClick={() => setIsEditing(true)}
+            >
+              <FaEdit className="h-4 w-4" />
+              Edit Settings
+            </Button>
+          ) : (
+            <div className="flex gap-3">
+              <Button
+                onClick={handleCancel}
+                variation="tertiary"
+                size="medium"
+                className="flex items-center gap-2"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSave}
+                variation="primary"
+                size="medium"
+                className="flex items-center gap-2"
+                disabled={isSubmitting}
+              >
+                <FaSave className="h-4 w-4" />
+                {isSubmitting ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          )
         ) : (
-          <div className="flex gap-3">
-            <Button
-              onClick={handleCancel}
-              variation="tertiary"
-              className="rounded-xl px-6 py-3"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSave}
-              variation="primary"
-              className="flex items-center gap-2 rounded-xl px-6 py-3 shadow-lg transition-all duration-300 hover:shadow-xl"
-              disabled={isSubmitting}
-            >
-              <FaSave className="h-4 w-4" />
-              {isSubmitting ? "Saving..." : "Save Changes"}
-            </Button>
+          <div className="text-sm text-gray-500">
+            <span className="font-medium">Read-only access</span>
+            <br />
+            <span className="text-xs">
+              Only administrators can update settings
+            </span>
           </div>
         )}
       </div>
@@ -160,7 +176,7 @@ function Settings() {
                   type="text"
                   value={hotelInfo.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  disabled={!isEditing}
+                  disabled={!isEditing || !canUpdate}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="Enter hotel name"
                 />
@@ -176,7 +192,7 @@ function Settings() {
                   type="text"
                   value={hotelInfo.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
-                  disabled={!isEditing}
+                  disabled={!isEditing || !canUpdate}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="Enter hotel address"
                 />
@@ -192,7 +208,7 @@ function Settings() {
                   type="tel"
                   value={hotelInfo.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  disabled={!isEditing}
+                  disabled={!isEditing || !canUpdate}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="Enter phone number"
                 />
@@ -208,7 +224,7 @@ function Settings() {
                   type="email"
                   value={hotelInfo.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
-                  disabled={!isEditing}
+                  disabled={!isEditing || !canUpdate}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="Enter email address"
                 />
@@ -224,7 +240,7 @@ function Settings() {
                   type="text"
                   value={hotelInfo.taxCode}
                   onChange={(e) => handleInputChange("taxCode", e.target.value)}
-                  disabled={!isEditing}
+                  disabled={!isEditing || !canUpdate}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="Enter tax code"
                 />
@@ -257,7 +273,7 @@ function Settings() {
                   }}
                   step="1"
                   inputMode="numeric"
-                  disabled={!isEditing}
+                  disabled={!isEditing || !canUpdate}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
                   placeholder="Enter number of floors"
                 />

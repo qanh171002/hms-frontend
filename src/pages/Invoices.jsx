@@ -23,8 +23,8 @@ import {
 import { FaX } from "react-icons/fa6";
 
 const statusStyles = {
-  Pending: "bg-yellow-100 text-yellow-700",
-  Paid: "bg-green-100 text-green-700",
+  PENDING: "bg-yellow-100 text-yellow-700",
+  PAID: "bg-green-100 text-green-700",
 };
 
 const statusOptions = ["Pending", "Paid"];

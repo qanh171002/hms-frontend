@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import SpinnerMini from "../components/SpinnerMini";
 
 function Login() {
@@ -30,7 +30,7 @@ function Login() {
     try {
       setIsLoading(true);
       await loginUser(formData);
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       console.error("Login error:", error);
     } finally {

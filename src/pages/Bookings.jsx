@@ -26,10 +26,10 @@ import {
 import { FaX } from "react-icons/fa6";
 
 const statusStyles = {
-  "Checked in": "bg-green-100 text-green-700",
-  "Checked out": "bg-gray-200 text-gray-700",
-  Unconfirmed: "bg-blue-100 text-blue-700",
-  Cancelled: "bg-red-100 text-red-700",
+  "CHECKED IN": "bg-green-100 text-green-700",
+  "CHECKED OUT": "bg-gray-200 text-gray-700",
+  UNCONFIRMED: "bg-blue-100 text-blue-700",
+  CANCELLED: "bg-red-100 text-red-700",
 };
 
 const bookingTypes = ["Hourly", "Daily"];

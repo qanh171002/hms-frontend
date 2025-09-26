@@ -8,12 +8,70 @@ import {
   HiOutlineUsers,
 } from "react-icons/hi2";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 function Sidebar() {
+  const { hasAnyRole } = useAuth();
+
+  // Define menu items with their required roles
+  const menuItems = [
+    {
+      path: "/dashboard",
+      label: "Dashboard",
+      icon: HiOutlineHome,
+      roles: ["ADMIN", "MANAGER"],
+    },
+    {
+      path: "/rooms",
+      label: "Rooms",
+      icon: HiOutlineHomeModern,
+      roles: ["ADMIN", "MANAGER", "RECEPTIONIST"],
+    },
+    {
+      path: "/bookings",
+      label: "Bookings",
+      icon: HiOutlineCalendarDays,
+      roles: ["ADMIN", "RECEPTIONIST"],
+    },
+    {
+      path: "/users",
+      label: "Users",
+      icon: HiOutlineUsers,
+      roles: ["ADMIN", "MANAGER"],
+    },
+    {
+      path: "/assets",
+      label: "Assets",
+      icon: HiOutlineInboxStack,
+      roles: ["ADMIN", "MANAGER", "RECEPTIONIST"],
+    },
+    {
+      path: "/invoices",
+      label: "Invoices",
+      icon: HiOutlineCash,
+      roles: ["ADMIN", "RECEPTIONIST", "ACCOUNTANT"],
+    },
+    {
+      path: "/promotions",
+      label: "Promotions",
+      icon: HiOutlineCalendarDays,
+      roles: ["ADMIN", "MANAGER"],
+    },
+    {
+      path: "/settings",
+      label: "Settings",
+      icon: HiOutlineCog6Tooth,
+      roles: ["ADMIN", "MANAGER", "RECEPTIONIST", "ACCOUNTANT"],
+    },
+  ];
+
+  // Filter menu items based on user role
+  const visibleMenuItems = menuItems.filter((item) => hasAnyRole(item.roles));
+
   return (
-    <aside className="relative z-10 flex h-full w-72 flex-col border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-lg">
+    <aside className="relative z-10 flex h-full w-56 flex-col border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-lg md:w-48 lg:w-64">
       {/* Logo Section */}
-      <div className="flex items-center justify-center gap-3 px-6 pt-8 pb-6">
+      <div className="flex items-center justify-center gap-3 px-4 pt-6 pb-4 md:px-6 md:pt-8 md:pb-6">
         <div className="rounded-full bg-blue-100 p-3 shadow-sm">
           <img src="/logo.svg" alt="Hotelio logo" className="h-8 w-8" />
         </div>
@@ -24,182 +82,36 @@ function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col space-y-2 px-4 py-4">
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <HiOutlineHome
-                className={`mr-3 text-xl transition-colors ${
+      <nav className="flex flex-col space-y-2 px-3 py-3 md:px-4 md:py-4">
+        {visibleMenuItems.map((item) => {
+          const IconComponent = item.icon;
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? "text-white"
-                    : "text-gray-500 group-hover:text-blue-500"
-                }`}
-              />
-              Dashboard
-            </>
-          )}
-        </NavLink>
-        <NavLink
-          to="/users"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <HiOutlineUsers
-                className={`mr-3 text-xl transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-500 group-hover:text-blue-500"
-                }`}
-              />
-              Users
-            </>
-          )}
-        </NavLink>
-        <NavLink
-          to="/bookings"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <HiOutlineCalendarDays
-                className={`mr-3 text-xl transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-500 group-hover:text-blue-500"
-                }`}
-              />
-              Bookings
-            </>
-          )}
-        </NavLink>
-        <NavLink
-          to="/rooms"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <HiOutlineHomeModern
-                className={`mr-3 text-xl transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-500 group-hover:text-blue-500"
-                }`}
-              />
-              Rooms
-            </>
-          )}
-        </NavLink>
-        <NavLink
-          to="/invoices"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <HiOutlineCash
-                className={`mr-3 text-xl transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-500 group-hover:text-blue-500"
-                }`}
-              />
-              Invoices
-            </>
-          )}
-        </NavLink>
-        <NavLink
-          to="/assets"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <HiOutlineInboxStack
-                className={`mr-3 text-xl transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-500 group-hover:text-blue-500"
-                }`}
-              />
-              Assets
-            </>
-          )}
-        </NavLink>
-        <NavLink
-          to="/promotions"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          <HiOutlineInboxStack className="mr-3 text-2xl" />
-          Promotions
-        </NavLink>
-
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <HiOutlineCog6Tooth
-                className={`mr-3 text-xl transition-colors ${
-                  isActive
-                    ? "text-white"
-                    : "text-gray-500 group-hover:text-blue-500"
-                }`}
-              />
-              Settings
-            </>
-          )}
-        </NavLink>
+                    ? "scale-[1.02] transform bg-blue-500 text-white shadow-lg shadow-blue-200"
+                    : "text-gray-600 hover:bg-blue-50 hover:text-blue-500 hover:shadow-md"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <IconComponent
+                    className={`mr-3 text-xl transition-colors ${
+                      isActive
+                        ? "text-white"
+                        : "text-gray-500 group-hover:text-blue-500"
+                    }`}
+                  />
+                  {item.label}
+                </>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
     </aside>
   );

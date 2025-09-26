@@ -46,7 +46,7 @@ function Rooms() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(8);
 
   const [filterTimeout, setFilterTimeout] = useState(null);
 
@@ -383,7 +383,7 @@ function Rooms() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               {rooms.map((room) => (
                 <RoomCard
                   key={room.id}
@@ -425,8 +425,8 @@ function Rooms() {
                   }}
                   className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
                 >
-                  <option value={10}>10</option>
-                  <option value={50}>50</option>
+                  <option value={8}>8</option>
+                  <option value={12}>12</option>
                 </select>
               </div>
             </div>
@@ -520,6 +520,9 @@ function RoomCard({ room, onBookRoom }) {
               <span className="text-sm font-medium text-gray-500">
                 /{priceType}
               </span>
+            </div>
+            <div className="mt-1 text-xs text-gray-500">
+              Include current promotion
             </div>
           </div>
         )}

@@ -25,7 +25,11 @@ export const getRoomById = async (id) => {
 
 export const createRoom = async (room) => {
   try {
-    const res = await apiClient.post("/rooms", room);
+    const processedRoom = {
+      ...room,
+      status: room.status?.toUpperCase() || "AVAILABLE",
+    };
+    const res = await apiClient.post("/rooms", processedRoom);
     return res.data;
   } catch (error) {
     console.log("Error creating room:", error);
@@ -35,7 +39,11 @@ export const createRoom = async (room) => {
 
 export const updateRoom = async (id, room) => {
   try {
-    const response = await apiClient.put(`/rooms/${id}`, room);
+    const processedRoom = {
+      ...room,
+      status: room.status?.toUpperCase() || "AVAILABLE",
+    };
+    const response = await apiClient.put(`/rooms/${id}`, processedRoom);
     return {
       id: response.data.id,
       roomNumber: response.data.roomNumber,

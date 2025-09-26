@@ -1,4 +1,5 @@
 import { HiDotsVertical, HiTrash, HiPencil } from "react-icons/hi";
+import { FaFilter } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -8,17 +9,19 @@ import {
   deleteAsset,
   createAsset,
   updateAsset,
+  getAssetsByRoomId,
 } from "../apis/assetsApi";
+import { getRooms } from "../apis/roomsApi";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
 import AddAssetForm from "../components/AddAssetForm";
 import EditAssetForm from "../components/EditAssetForm";
 
 const conditionStyles = {
-  Good: "bg-green-100 text-green-700",
-  Fair: "bg-yellow-100 text-yellow-700",
-  Poor: "bg-red-100 text-red-700",
-  Excellent: "bg-blue-100 text-blue-700",
+  GOOD: "bg-green-100 text-green-700",
+  FAIR: "bg-yellow-100 text-yellow-700",
+  POOR: "bg-red-100 text-red-700",
+  EXCELLENT: "bg-blue-100 text-blue-700",
 };
 
 const FilterButton = ({ active, children, onClick }) => (
@@ -36,6 +39,7 @@ function Assets() {
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [showRoomFilter, setShowRoomFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -43,16 +47,48 @@ function Assets() {
   const [editingAsset, setEditingAsset] = useState(null);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoomId, setSelectedRoomId] = useState("");
+
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (activeFilter !== "All") count += 1;
+    if (selectedRoomId) count += 1;
+    return count;
+  };
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const data = await getRooms(0, 1000);
+        setRooms(data.content || []);
+      } catch (err) {
+        console.error("Error fetching rooms:", err);
+      }
+    };
+
+    fetchRooms();
+  }, []);
 
   useEffect(() => {
     const fetchAssets = async () => {
       try {
         setIsLoading(true);
-        const data = await getAssets(currentPage - 1, pageSize);
+        let data;
+
+        if (selectedRoomId) {
+          const roomAssets = await getAssetsByRoomId(selectedRoomId);
+          data = { content: roomAssets, totalPages: 1 };
+        } else {
+          data = await getAssets(currentPage - 1, pageSize);
+        }
+
         const filtered =
           activeFilter === "All"
             ? data.content
-            : data.content.filter((asset) => asset.condition === activeFilter);
+            : data.content.filter(
+                (asset) => asset.condition === activeFilter.toUpperCase(),
+              );
 
         const sorted = [...(filtered || [])].sort(
           (a, b) => (a.id || 0) - (b.id || 0),
@@ -68,7 +104,7 @@ function Assets() {
     };
 
     fetchAssets();
-  }, [currentPage, pageSize, activeFilter]);
+  }, [currentPage, pageSize, activeFilter, selectedRoomId]);
 
   const handleAddAsset = async (newAsset) => {
     try {
@@ -171,7 +207,7 @@ function Assets() {
 
   const filteredAssets = assets.filter((asset) => {
     if (activeFilter === "All") return true;
-    return asset.condition === activeFilter;
+    return asset.condition === activeFilter.toUpperCase();
   });
 
   const formatDate = (dateString) => {
@@ -197,6 +233,22 @@ function Assets() {
           </p>
         </div>
         <div className="col-span-2 flex items-center justify-end gap-2">
+          <Button
+            onClick={() => setShowRoomFilter((v) => !v)}
+            variation={showRoomFilter ? "primary" : "tertiary"}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2 transition-all duration-300 ${
+              showRoomFilter ? "shadow-lg" : ""
+            }`}
+          >
+            <FaFilter className="h-4 w-4" />
+            <span>Filters</span>
+            {getActiveFilterCount() > 0 && (
+              <span className="rounded-full bg-blue-600 px-2 py-1 text-xs text-white">
+                {getActiveFilterCount()}
+              </span>
+            )}
+          </Button>
+
           <div className="flex items-center gap-2 rounded-lg bg-gray-100 p-1">
             <FilterButton
               active={activeFilter === "All"}
@@ -229,11 +281,48 @@ function Assets() {
               Poor
             </FilterButton>
           </div>
-          <Button onClick={() => setIsModalOpen(true)}>Add Asset</Button>
+          <Button
+            className="whitespace-nowrap"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Add Asset
+          </Button>
         </div>
       </div>
 
       <div className="col-span-4 rounded-2xl bg-white p-6 shadow-md">
+        {/* Unified filter header like Rooms */}
+        {showRoomFilter && (
+          <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Filter by Room Number
+                </label>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  placeholder="Enter room number"
+                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (!value) {
+                      setSelectedRoomId("");
+                      return;
+                    }
+                    const num = Number(value);
+                    const matched = rooms.find(
+                      (r) => Number(r.roomNumber) === num,
+                    );
+                    setSelectedRoomId(matched ? String(matched.id) : "");
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">

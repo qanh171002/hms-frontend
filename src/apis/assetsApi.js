@@ -24,7 +24,11 @@ export const getAssetById = async (id) => {
 
 export const createAsset = async (assetData) => {
   try {
-    const response = await axios.post("/assets", assetData);
+    const processedData = {
+      ...assetData,
+      condition: assetData.condition?.toUpperCase() || "GOOD",
+    };
+    const response = await axios.post("/assets", processedData);
     return response.data;
   } catch (error) {
     console.error("Error creating asset:", error);
@@ -34,7 +38,11 @@ export const createAsset = async (assetData) => {
 
 export const updateAsset = async (id, assetData) => {
   try {
-    const response = await axios.put(`/assets/${id}`, assetData);
+    const processedData = {
+      ...assetData,
+      condition: assetData.condition?.toUpperCase() || "GOOD",
+    };
+    const response = await axios.put(`/assets/${id}`, processedData);
     return response.data;
   } catch (error) {
     console.error("Error updating asset:", error);
@@ -48,6 +56,16 @@ export const deleteAsset = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Error deleting asset:", error);
+    throw error;
+  }
+};
+
+export const getAssetsByRoomId = async (roomId) => {
+  try {
+    const response = await axios.get(`/assets/room/${roomId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching assets by room:", error);
     throw error;
   }
 };

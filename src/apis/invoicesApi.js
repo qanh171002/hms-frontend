@@ -24,7 +24,11 @@ export const getInvoiceById = async (id) => {
 
 export const createInvoice = async (invoiceData) => {
   try {
-    const response = await axios.post("/invoices", invoiceData);
+    const processedData = {
+      ...invoiceData,
+      status: invoiceData.status?.toUpperCase() || "PENDING",
+    };
+    const response = await axios.post("/invoices", processedData);
     return response.data;
   } catch (error) {
     console.error("Error creating invoice:", error);
@@ -34,7 +38,11 @@ export const createInvoice = async (invoiceData) => {
 
 export const updateInvoice = async (id, invoiceData) => {
   try {
-    const response = await axios.put(`/invoices/${id}`, invoiceData);
+    const processedData = {
+      ...invoiceData,
+      status: invoiceData.status?.toUpperCase() || "PENDING",
+    };
+    const response = await axios.put(`/invoices/${id}`, processedData);
     return response.data;
   } catch (error) {
     console.error("Error updating invoice:", error);
@@ -101,6 +109,29 @@ export const filterInvoices = async (filters, page = 0, size = 10) => {
     return response.data;
   } catch (error) {
     console.error("Error filtering invoices:", error);
+    throw error;
+  }
+};
+
+export const downloadInvoicePDF = async (invoiceId) => {
+  try {
+    const response = await axios.get(`/invoices/${invoiceId}/pdf`, {
+      responseType: "blob",
+    });
+
+    // Create blob link to download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `invoice-${invoiceId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error downloading invoice PDF:", error);
     throw error;
   }
 };
