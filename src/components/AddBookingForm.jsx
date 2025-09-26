@@ -102,9 +102,8 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
   const isHourly = formData.bookingType === "Hourly";
 
   const toISODateTime = (v) => (v ? new Date(v).toISOString() : "");
-  const toISONoon = (v) => (v ? new Date(`${v}T12:00:00`).toISOString() : "");
-  const toISOJustBeforeNoon = (v) =>
-    v ? new Date(`${v}T11:59:59`).toISOString() : "";
+  const toISONoon = (v) => (v ? `${v}T12:00:00.000Z` : "");
+  const toISOJustBeforeNoon = (v) => (v ? `${v}T11:59:59.000Z` : "");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
