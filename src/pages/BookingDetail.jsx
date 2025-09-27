@@ -43,6 +43,7 @@ function BookingDetail() {
   const [invoiceId, setInvoiceId] = useState(null);
   const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
   const [hasSearchedForInvoice, setHasSearchedForInvoice] = useState(false);
+  const [invoiceNotFound, setInvoiceNotFound] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -90,6 +91,7 @@ function BookingDetail() {
   useEffect(() => {
     setHasSearchedForInvoice(false);
     setInvoiceId(null);
+    setInvoiceNotFound(false);
   }, [booking?.id]);
 
   const formatDateTime = (dateString) => {
@@ -108,9 +110,17 @@ function BookingDetail() {
       const data = await getInvoices();
       const list = data?.content || [];
       const found = list.find((inv) => inv.bookingId === booking.id);
-      if (found?.id) setInvoiceId(found.id);
+      if (found?.id) {
+        setInvoiceId(found.id);
+        setInvoiceNotFound(false);
+      } else {
+        setInvoiceId(null);
+        setInvoiceNotFound(true);
+      }
     } catch (e) {
       console.log(e);
+      setInvoiceId(null);
+      setInvoiceNotFound(true);
     }
   }, [booking?.id]);
 
@@ -635,7 +645,7 @@ function BookingDetail() {
           </Button>
         )}
 
-        {booking.status === "CHECKED OUT" && (
+        {booking.status === "CHECKED OUT" && !invoiceNotFound && (
           <Button
             size="medium"
             onClick={() => setIsInvoiceModalOpen(true)}
