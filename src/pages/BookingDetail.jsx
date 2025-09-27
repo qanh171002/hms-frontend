@@ -27,6 +27,7 @@ import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
 import ConfirmModal from "../components/ConfirmModal";
+import InvoiceModal from "../components/InvoiceModal";
 
 const statusStyles = {
   "CHECKED IN": "bg-green-100 text-green-600",
@@ -48,6 +49,7 @@ function BookingDetail() {
   const [hasSearchedForInvoice, setHasSearchedForInvoice] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchBookingData = async () => {
@@ -643,13 +645,13 @@ function BookingDetail() {
         {booking.status === "CHECKED OUT" && (
           <Button
             size="medium"
-            onClick={() => navigate(`/invoices/${invoiceId}`)}
+            onClick={() => setIsInvoiceModalOpen(true)}
             disabled={!invoiceId || isUpdating}
             className="flex items-center gap-2"
           >
             <FaFileInvoice />
             {invoiceId
-              ? "Check invoice"
+              ? "View invoice"
               : isCreatingInvoice
                 ? "Creating invoice..."
                 : "Finding invoice..."}
@@ -699,6 +701,12 @@ function BookingDetail() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+      />
+
+      <InvoiceModal
+        isOpen={isInvoiceModalOpen}
+        onClose={() => setIsInvoiceModalOpen(false)}
+        invoiceId={invoiceId}
       />
     </div>
   );

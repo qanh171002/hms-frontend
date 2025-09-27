@@ -6,6 +6,9 @@ import { updateRoom } from "../apis/roomsApi";
 import { useEffect } from "react";
 import { getCountries } from "../apis/countriesApi";
 
+const inputClass =
+  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
+
 function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
   const [formData, setFormData] = useState({
     guestFullName: "",
@@ -95,9 +98,6 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
       return newData;
     });
   }, [formData.bookingType]);
-
-  const inputClass =
-    "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
 
   const isHourly = formData.bookingType === "Hourly";
 

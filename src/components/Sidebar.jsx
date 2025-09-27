@@ -19,7 +19,7 @@ function Sidebar() {
       path: "/dashboard",
       label: "Dashboard",
       icon: HiOutlineHome,
-      roles: ["ADMIN", "MANAGER"],
+      roles: ["ADMIN", "MANAGER", "ACCOUNTANT"],
     },
     {
       path: "/rooms",
@@ -43,13 +43,13 @@ function Sidebar() {
       path: "/assets",
       label: "Assets",
       icon: HiOutlineInboxStack,
-      roles: ["ADMIN", "MANAGER", "RECEPTIONIST"],
+      roles: ["ADMIN", "MANAGER"],
     },
     {
       path: "/invoices",
       label: "Invoices",
       icon: HiOutlineCash,
-      roles: ["ADMIN", "RECEPTIONIST", "ACCOUNTANT"],
+      roles: ["ADMIN", "ACCOUNTANT"],
     },
     {
       path: "/promotions",

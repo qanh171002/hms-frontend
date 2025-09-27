@@ -297,32 +297,6 @@ function Assets() {
             )}
           </Button>
           <Button
-            onClick={() => {
-              console.log("Testing search with sample filters...");
-              const testFilters = {
-                name: "test",
-                category: "",
-                condition: "",
-                minCost: "",
-                maxCost: "",
-                purchaseDateFrom: "",
-                purchaseDateTo: "",
-                roomNumber: "",
-              };
-              searchAssets(testFilters, 0, 10)
-                .then((data) => {
-                  console.log("Test search result:", data);
-                })
-                .catch((err) => {
-                  console.error("Test search error:", err);
-                });
-            }}
-            variation="secondary"
-            className="mr-2 rounded-xl px-4 py-2"
-          >
-            Test Search
-          </Button>
-          <Button
             onClick={() => setIsModalOpen(true)}
             variation="primary"
             className="rounded-xl px-6 py-3 shadow-lg transition-all duration-300 hover:shadow-xl"
