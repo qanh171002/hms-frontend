@@ -1,10 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
-import { getInvoiceById, updateInvoice } from "../apis/invoicesApi";
+import {
+  getInvoiceById,
+  updateInvoice,
+  downloadInvoicePDF,
+} from "../apis/invoicesApi";
 import toast from "react-hot-toast";
 import Spinner from "./Spinner";
 import Modal from "./Modal";
 import Button from "./Button";
 import SpinnerMini from "./SpinnerMini";
+import { HiDownload } from "react-icons/hi";
 
 const statusStyles = {
   PENDING: "bg-yellow-100 text-yellow-700",
@@ -21,6 +26,7 @@ function InvoiceModal({ isOpen, onClose, invoiceId }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [formData, setFormData] = useState({
     paidAmount: "",
     dueDate: "",
@@ -115,6 +121,21 @@ function InvoiceModal({ isOpen, onClose, invoiceId }) {
       month: "short",
       day: "numeric",
     });
+  };
+
+  const handleDownloadInvoice = async () => {
+    if (!invoiceId) return;
+
+    try {
+      setIsDownloading(true);
+      await downloadInvoicePDF(invoiceId);
+      toast.success("Invoice PDF downloaded successfully!");
+    } catch (error) {
+      console.error("Error downloading invoice PDF:", error);
+      toast.error("Failed to download invoice PDF. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -279,20 +300,38 @@ function InvoiceModal({ isOpen, onClose, invoiceId }) {
               </div>
 
               {/* Action Buttons */}
-              {isEditing && (
-                <div className="flex justify-end gap-3 pt-4">
+              <div className="flex justify-end gap-3 pt-4">
+                {isEditing ? (
+                  <>
+                    <Button
+                      onClick={handleCancel}
+                      variation="secondary"
+                      disabled={isUpdating}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSave} disabled={isUpdating}>
+                      {isUpdating ? <SpinnerMini /> : "Save"}
+                    </Button>
+                  </>
+                ) : (
                   <Button
-                    onClick={handleCancel}
+                    onClick={handleDownloadInvoice}
                     variation="secondary"
-                    disabled={isUpdating}
+                    disabled={isDownloading}
+                    className="flex items-center gap-2"
                   >
-                    Cancel
+                    {isDownloading ? (
+                      <SpinnerMini />
+                    ) : (
+                      <>
+                        <HiDownload className="h-4 w-4" />
+                        Download PDF
+                      </>
+                    )}
                   </Button>
-                  <Button onClick={handleSave} disabled={isUpdating}>
-                    {isUpdating ? <SpinnerMini /> : "Save"}
-                  </Button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         ) : (
