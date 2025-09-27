@@ -657,7 +657,7 @@ function BookingDetail() {
             ) : isCreatingInvoice ? (
               <SpinnerMini />
             ) : (
-              "Finding invoice..."
+              <SpinnerMini />
             )}
           </Button>
         )}
