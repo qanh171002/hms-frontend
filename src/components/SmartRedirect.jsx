@@ -16,12 +16,10 @@ const SmartRedirect = () => {
     );
   }
 
-  if (hasAnyRole(["ADMIN", "MANAGER"])) {
+  if (hasAnyRole(["ADMIN", "MANAGER", "ACCOUNTANT"])) {
     return <Navigate to="/dashboard" replace />;
   } else if (hasAnyRole(["RECEPTIONIST"])) {
     return <Navigate to="/rooms" replace />;
-  } else if (hasAnyRole(["ACCOUNTANT"])) {
-    return <Navigate to="/invoices" replace />;
   } else {
     return <Navigate to="/profile" replace />;
   }
