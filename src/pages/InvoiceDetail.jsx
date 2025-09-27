@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { getInvoiceById, downloadInvoicePDF } from "../apis/invoicesApi";
-import Spinner from "../components/Spinner";
-import {
-  HiOutlineArrowLeft,
-  HiOutlineCalendar,
-  HiOutlineCurrencyDollar,
-  HiOutlineCreditCard,
-  HiOutlineChatBubbleLeftRight,
-  HiOutlineDocumentArrowDown,
-} from "react-icons/hi2";
-import { FaArrowLeft } from "react-icons/fa";
-import { FaFilePdf } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { FaArrowLeft } from "react-icons/fa";
+import {
+  HiOutlineCalendar,
+  HiOutlineChatBubbleLeftRight,
+  HiOutlineCreditCard,
+  HiOutlineCurrencyDollar,
+} from "react-icons/hi2";
+import { useNavigate, useParams } from "react-router-dom";
+import { downloadInvoicePDF, getInvoiceById } from "../apis/invoicesApi";
 import Button from "../components/Button";
+import Spinner from "../components/Spinner";
+import SpinnerMini from "../components/SpinnerMini";
 function InvoiceDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -167,8 +165,7 @@ function InvoiceDetail() {
           disabled={isDownloading}
           className="flex items-center gap-2"
         >
-          <FaFilePdf />
-          {isDownloading ? "Downloading..." : "Download PDF"}
+          {isDownloading ? <SpinnerMini /> : "Download PDF"}
         </Button>
 
         <Button
@@ -177,7 +174,6 @@ function InvoiceDetail() {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2"
         >
-          <FaArrowLeft />
           Back
         </Button>
       </div>

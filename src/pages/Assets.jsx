@@ -296,11 +296,7 @@ function Assets() {
               </span>
             )}
           </Button>
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            variation="primary"
-            className="rounded-xl px-6 py-3 shadow-lg transition-all duration-300 hover:shadow-xl"
-          >
+          <Button onClick={() => setIsModalOpen(true)} variation="primary">
             Add Asset
           </Button>
         </div>

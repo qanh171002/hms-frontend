@@ -3,10 +3,7 @@ import { useState, useEffect } from "react";
 import {
   FaBed,
   FaUserFriends,
-  FaDollarSign,
   FaArrowLeft,
-  FaEdit,
-  FaTrash,
   FaClock,
   FaCalendarDay,
 } from "react-icons/fa";
@@ -213,7 +210,6 @@ export default function RoomDetail() {
           variation="primary"
           className="flex items-center gap-2"
         >
-          <FaEdit />
           Edit Room
         </Button>
         <Button
@@ -221,7 +217,6 @@ export default function RoomDetail() {
           variation="danger"
           className="flex items-center gap-2"
         >
-          <FaTrash />
           Delete Room
         </Button>
         <Button
@@ -230,7 +225,6 @@ export default function RoomDetail() {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2"
         >
-          <FaArrowLeft />
           Back
         </Button>
       </div>

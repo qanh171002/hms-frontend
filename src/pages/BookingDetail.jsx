@@ -2,17 +2,9 @@ import {
   HiOutlineUser,
   HiOutlineHome,
   HiOutlineCalendar,
-  HiOutlineCurrencyDollar,
   HiOutlineChatBubbleLeftRight,
 } from "react-icons/hi2";
-import {
-  FaSignInAlt,
-  FaSignOutAlt,
-  FaTimes,
-  FaTrash,
-  FaFileInvoice,
-  FaArrowLeft,
-} from "react-icons/fa";
+import { FaSignInAlt, FaTimes, FaArrowLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import {
@@ -28,6 +20,7 @@ import toast from "react-hot-toast";
 import Button from "../components/Button";
 import ConfirmModal from "../components/ConfirmModal";
 import InvoiceModal from "../components/InvoiceModal";
+import SpinnerMini from "../components/SpinnerMini";
 
 const statusStyles = {
   "CHECKED IN": "bg-green-100 text-green-600",
@@ -41,7 +34,10 @@ function BookingDetail() {
   const { id } = useParams();
   const [booking, setBooking] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [countries, setCountries] = useState([]);
   const [flagLoaded, setFlagLoaded] = useState(false);
   const [invoiceId, setInvoiceId] = useState(null);
@@ -122,7 +118,7 @@ function BookingDetail() {
     if (
       booking?.status === "CHECKED OUT" &&
       !invoiceId &&
-      !isUpdating &&
+      !isCheckingOut &&
       !isCreatingInvoice &&
       !hasSearchedForInvoice
     ) {
@@ -133,7 +129,7 @@ function BookingDetail() {
     booking?.status,
     booking?.id,
     invoiceId,
-    isUpdating,
+    isCheckingOut,
     isCreatingInvoice,
     hasSearchedForInvoice,
     fetchInvoiceByBooking,
@@ -234,7 +230,7 @@ function BookingDetail() {
     if (!booking) return;
 
     try {
-      setIsUpdating(true);
+      setIsCheckingIn(true);
       const now = new Date().toISOString();
       const updatedBooking = {
         ...booking,
@@ -267,7 +263,7 @@ function BookingDetail() {
 
       toast.error(errorMessage);
     } finally {
-      setIsUpdating(false);
+      setIsCheckingIn(false);
     }
   };
 
@@ -275,7 +271,7 @@ function BookingDetail() {
     if (!booking) return;
 
     try {
-      setIsUpdating(true);
+      setIsCheckingOut(true);
       const now = new Date().toISOString();
       const updatedBooking = {
         ...booking,
@@ -335,7 +331,7 @@ function BookingDetail() {
 
       toast.error(errorMessage);
     } finally {
-      setIsUpdating(false);
+      setIsCheckingOut(false);
     }
   };
 
@@ -351,7 +347,7 @@ function BookingDetail() {
 
   const confirmCancelBooking = async (reason) => {
     try {
-      setIsUpdating(true);
+      setIsCancelling(true);
       const updatedBooking = {
         ...booking,
         status: "CANCELLED",
@@ -381,14 +377,14 @@ function BookingDetail() {
 
       toast.error(errorMessage);
     } finally {
-      setIsUpdating(false);
+      setIsCancelling(false);
       setIsCancelOpen(false);
     }
   };
 
   const confirmDeleteBooking = async () => {
     try {
-      setIsUpdating(true);
+      setIsDeleting(true);
       await deleteBooking(booking.id);
 
       const roomId = booking.roomId;
@@ -417,7 +413,7 @@ function BookingDetail() {
 
       toast.error(errorMessage);
     } finally {
-      setIsUpdating(false);
+      setIsDeleting(false);
       setIsDeleteOpen(false);
     }
   };
@@ -611,21 +607,21 @@ function BookingDetail() {
             <Button
               size="medium"
               onClick={handleCheckIn}
-              disabled={isUpdating}
+              disabled={isCheckingIn || isCancelling || isDeleting}
               className="flex items-center gap-2"
             >
               <FaSignInAlt />
-              {isUpdating ? "Processing..." : "Check in"}
+              {isCheckingIn ? <SpinnerMini /> : "Check in"}
             </Button>
             <Button
               variation="danger"
               size="medium"
               onClick={handleCancelBooking}
-              disabled={isUpdating}
+              disabled={isCheckingIn || isCancelling || isDeleting}
               className="flex items-center gap-2"
             >
               <FaTimes />
-              {isUpdating ? "Processing..." : "Cancel booking"}
+              {isCancelling ? <SpinnerMini /> : "Cancel booking"}
             </Button>
           </>
         )}
@@ -634,11 +630,10 @@ function BookingDetail() {
           <Button
             size="medium"
             onClick={handleCheckOut}
-            disabled={isUpdating}
+            disabled={isCheckingOut || isCancelling || isDeleting}
             className="flex items-center gap-2"
           >
-            <FaSignOutAlt />
-            {isUpdating ? "Processing..." : "Check out"}
+            {isCheckingOut ? <SpinnerMini /> : "Check out"}
           </Button>
         )}
 
@@ -646,26 +641,26 @@ function BookingDetail() {
           <Button
             size="medium"
             onClick={() => setIsInvoiceModalOpen(true)}
-            disabled={!invoiceId || isUpdating}
+            disabled={!invoiceId || isCheckingOut || isDeleting}
             className="flex items-center gap-2"
           >
-            <FaFileInvoice />
-            {invoiceId
-              ? "View invoice"
-              : isCreatingInvoice
-                ? "Creating invoice..."
-                : "Finding invoice..."}
+            {invoiceId ? (
+              "View invoice"
+            ) : isCreatingInvoice ? (
+              <SpinnerMini />
+            ) : (
+              "Finding invoice..."
+            )}
           </Button>
         )}
         <Button
           variation="danger"
           size="medium"
           onClick={handleDeleteBooking}
-          disabled={isUpdating}
+          disabled={isCheckingIn || isCheckingOut || isCancelling || isDeleting}
           className="flex items-center gap-2"
         >
-          <FaTrash />
-          {isUpdating ? "Processing..." : "Delete booking"}
+          {isDeleting ? <SpinnerMini /> : "Delete booking"}
         </Button>
 
         <Button
@@ -674,7 +669,6 @@ function BookingDetail() {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2"
         >
-          <FaArrowLeft />
           Back
         </Button>
       </div>
