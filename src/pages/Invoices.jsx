@@ -1,5 +1,6 @@
-import { HiTrash, HiPencil } from "react-icons/hi";
+import { HiTrash, HiPencil, HiEye } from "react-icons/hi";
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import ConfirmModal from "../components/ConfirmModal";
@@ -31,6 +32,7 @@ const statusOptions = ["Pending", "Paid"];
 const paymentMethods = ["Cash", "Credit Card", "Bank Transfer", "PayPal"];
 
 function Invoices() {
+  const navigate = useNavigate();
   const [invoices, setInvoices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -547,6 +549,16 @@ function Invoices() {
                       </td>
                       <td className="px-3 py-4 text-right text-sm font-medium whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
+                          <button
+                            className="rounded-full p-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/invoices/${invoice.id}`);
+                            }}
+                            title="View invoice details"
+                          >
+                            <HiEye />
+                          </button>
                           <button
                             className="rounded-full p-2 text-green-600 hover:bg-green-50 hover:text-green-700"
                             onClick={(e) => {

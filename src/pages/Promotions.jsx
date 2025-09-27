@@ -153,11 +153,12 @@ function Promotions() {
                 </tr>
               ) : promotions.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan="6"
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
-                    No promotions found.
+                  <td colSpan="6" className="px-6 py-4">
+                    <div className="flex flex-col items-center justify-center py-16">
+                      <div className="text-lg font-semibold text-gray-400">
+                        There are no promotions available at the moment.
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ) : (
