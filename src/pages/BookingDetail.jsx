@@ -693,6 +693,8 @@ function BookingDetail() {
         inputLabel="Cancel reason"
         inputPlaceholder="Enter the reason for cancellation"
         validateInput={(v) => String(v).trim().length > 0}
+        isConfirming={isCancelling}
+        isCancelling={isCancelling}
       />
       <ConfirmModal
         isOpen={isDeleteOpen}
@@ -703,6 +705,8 @@ function BookingDetail() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+        isConfirming={isDeleting}
+        isCancelling={isDeleting}
       />
 
       <InvoiceModal

@@ -164,6 +164,7 @@ function Invoices() {
   };
 
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleDeleteInvoice = async (id) => {
     setConfirmDeleteId(id);
   };
@@ -171,6 +172,7 @@ function Invoices() {
     try {
       const id = confirmDeleteId;
       if (!id) return;
+      setIsDeleting(true);
       await deleteInvoice(id);
       setInvoices((prevInvoices) =>
         prevInvoices.filter((invoice) => invoice.id !== id),
@@ -191,6 +193,7 @@ function Invoices() {
 
       toast.error(errorMessage);
     } finally {
+      setIsDeleting(false);
       setConfirmDeleteId(null);
     }
   };
@@ -657,6 +660,8 @@ function Invoices() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+        isConfirming={isDeleting}
+        isCancelling={isDeleting}
       />
     </>
   );

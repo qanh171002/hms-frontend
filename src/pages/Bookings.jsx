@@ -161,13 +161,17 @@ function Bookings() {
   };
 
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDeleteBooking = async (id) => {
     setConfirmDeleteId(id);
   };
+
   const confirmDeleteBooking = async () => {
     try {
       const id = confirmDeleteId;
       if (!id) return;
+      setIsDeleting(true);
       await deleteBooking(id);
       setBookings((prevBookings) =>
         prevBookings
@@ -179,6 +183,7 @@ function Bookings() {
       toast.error("Failed to delete booking!");
       console.log(err);
     } finally {
+      setIsDeleting(false);
       setConfirmDeleteId(null);
     }
   };
@@ -727,6 +732,8 @@ function Bookings() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+        isConfirming={isDeleting}
+        isCancelling={isDeleting}
       />
     </>
   );

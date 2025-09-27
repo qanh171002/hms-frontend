@@ -25,6 +25,7 @@ function Promotions() {
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -90,13 +91,16 @@ function Promotions() {
     try {
       const id = confirmDeleteId;
       if (!id) return;
+      setIsDeleting(true);
       await deletePromotion(id);
       setPromotions((prev) => prev.filter((p) => p.id !== id));
-      setConfirmDeleteId(null);
       toast.success("Promotion deleted successfully!");
     } catch (err) {
       console.error("Error deleting promotion:", err);
       toast.error("Failed to delete promotion!");
+    } finally {
+      setIsDeleting(false);
+      setConfirmDeleteId(null);
     }
   };
 
@@ -275,6 +279,8 @@ function Promotions() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+        isConfirming={isDeleting}
+        isCancelling={isDeleting}
       />
     </>
   );

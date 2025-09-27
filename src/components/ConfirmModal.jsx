@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import Button from "./Button";
+import SpinnerMini from "./SpinnerMini";
 
 function ConfirmModal({
   isOpen,
@@ -15,6 +16,8 @@ function ConfirmModal({
   inputLabel = "Reason",
   inputPlaceholder = "Type here...",
   validateInput = (val) => val.trim().length > 0,
+  isConfirming = false,
+  isCancelling = false,
 }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -65,11 +68,21 @@ function ConfirmModal({
       )}
 
       <div className="flex justify-end gap-3">
-        <Button onClick={onClose} variation="tertiary" size="medium">
+        <Button
+          onClick={onClose}
+          variation="tertiary"
+          size="medium"
+          disabled={isConfirming || isCancelling}
+        >
           {cancelLabel}
         </Button>
-        <Button onClick={handleConfirm} variation={variation} size="medium">
-          {confirmLabel}
+        <Button
+          onClick={handleConfirm}
+          variation={variation}
+          size="medium"
+          disabled={isConfirming || isCancelling}
+        >
+          {isConfirming ? <SpinnerMini /> : confirmLabel}
         </Button>
       </div>
     </Modal>

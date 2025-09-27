@@ -25,6 +25,7 @@ export default function RoomDetail() {
   const [roomData, setRoomData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -82,6 +83,7 @@ export default function RoomDetail() {
   };
   const confirmDeleteRoom = async () => {
     try {
+      setIsDeleting(true);
       await deleteRoom(id);
       toast.success("Delete room successfully!");
       navigate("/rooms");
@@ -100,6 +102,7 @@ export default function RoomDetail() {
 
       toast.error(errorMessage);
     } finally {
+      setIsDeleting(false);
       setIsConfirmOpen(false);
     }
   };
@@ -244,6 +247,8 @@ export default function RoomDetail() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+        isConfirming={isDeleting}
+        isCancelling={isDeleting}
       />
     </div>
   );

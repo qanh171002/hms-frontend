@@ -206,6 +206,7 @@ function Assets() {
   };
 
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleDeleteAsset = async (id) => {
     setConfirmDeleteId(id);
   };
@@ -213,6 +214,7 @@ function Assets() {
     try {
       const id = confirmDeleteId;
       if (!id) return;
+      setIsDeleting(true);
       await deleteAsset(id);
       setAssets((prevAssets) => prevAssets.filter((asset) => asset.id !== id));
       toast.success("Asset deleted successfully!");
@@ -231,6 +233,7 @@ function Assets() {
 
       toast.error(errorMessage);
     } finally {
+      setIsDeleting(false);
       setConfirmDeleteId(null);
     }
   };
@@ -660,6 +663,8 @@ function Assets() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+        isConfirming={isDeleting}
+        isCancelling={isDeleting}
       />
     </>
   );

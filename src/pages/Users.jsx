@@ -134,6 +134,7 @@ function Users() {
   };
 
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const handleDeleteUser = async (id) => {
     setConfirmDeleteId(id);
   };
@@ -141,6 +142,7 @@ function Users() {
     try {
       const id = confirmDeleteId;
       if (!id) return;
+      setIsDeleting(true);
       await deleteUser(id);
       setUsers((prevUsers) =>
         prevUsers
@@ -163,6 +165,7 @@ function Users() {
 
       toast.error(errorMessage);
     } finally {
+      setIsDeleting(false);
       setConfirmDeleteId(null);
     }
   };
@@ -407,6 +410,8 @@ function Users() {
         confirmLabel="Delete"
         cancelLabel="Cancel"
         variation="danger"
+        isConfirming={isDeleting}
+        isCancelling={isDeleting}
       />
     </>
   );
