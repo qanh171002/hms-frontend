@@ -1,6 +1,13 @@
 import { HiDotsVertical, HiTrash, HiPencil } from "react-icons/hi";
-import { FaFilter } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import {
+  FaFilter,
+  FaSearch,
+  FaTag,
+  FaDollarSign,
+  FaCalendarAlt,
+  FaBed,
+} from "react-icons/fa";
+import { useState, useEffect, useCallback } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import ConfirmModal from "../components/ConfirmModal";
@@ -9,13 +16,13 @@ import {
   deleteAsset,
   createAsset,
   updateAsset,
-  getAssetsByRoomId,
+  searchAssets,
 } from "../apis/assetsApi";
-import { getRooms } from "../apis/roomsApi";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
 import AddAssetForm from "../components/AddAssetForm";
 import EditAssetForm from "../components/EditAssetForm";
+import { FaX } from "react-icons/fa6";
 
 const conditionStyles = {
   GOOD: "bg-green-100 text-green-700",
@@ -24,22 +31,23 @@ const conditionStyles = {
   EXCELLENT: "bg-blue-100 text-blue-700",
 };
 
-const FilterButton = ({ active, children, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-      active ? "bg-blue-500 text-white" : "text-gray-600 hover:text-gray-800"
-    }`}
-  >
-    {children}
-  </button>
-);
+const conditionOptions = ["EXCELLENT", "GOOD", "FAIR", "POOR"];
 
 function Assets() {
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("All");
-  const [showRoomFilter, setShowRoomFilter] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [filters, setFilters] = useState({
+    name: "",
+    category: "",
+    condition: "",
+    minCost: "",
+    maxCost: "",
+    purchaseDateFrom: "",
+    purchaseDateTo: "",
+    roomNumber: "",
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -47,50 +55,77 @@ function Assets() {
   const [editingAsset, setEditingAsset] = useState(null);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
-  const [rooms, setRooms] = useState([]);
-  const [selectedRoomId, setSelectedRoomId] = useState("");
+  const [filterTimeout, setFilterTimeout] = useState(null);
 
   const getActiveFilterCount = () => {
-    let count = 0;
-    if (activeFilter !== "All") count += 1;
-    if (selectedRoomId) count += 1;
-    return count;
+    return Object.values(filters).filter((value) => value !== "").length;
   };
 
+  const applyFilters = useCallback(async () => {
+    try {
+      setIsFiltering(true);
+
+      // Check if any filter has a meaningful value
+      const hasActiveFilters = Object.entries(filters).some(([, value]) => {
+        if (value === null || value === undefined) return false;
+        if (typeof value === "string") return value.trim() !== "";
+        return value !== "";
+      });
+
+      console.log("Current filters:", filters);
+      console.log("Has active filters:", hasActiveFilters);
+
+      let data;
+      if (hasActiveFilters) {
+        console.log("Using searchAssets API");
+        data = await searchAssets(filters, currentPage - 1, pageSize);
+      } else {
+        console.log("Using getAssets API");
+        data = await getAssets(currentPage - 1, pageSize);
+      }
+
+      console.log("API response:", data);
+
+      const sorted = [...(data.content || [])].sort(
+        (a, b) => (a.id || 0) - (b.id || 0),
+      );
+
+      setAssets(sorted);
+      setTotalPages(data.totalPages || 1);
+    } catch (err) {
+      console.error("Error filtering assets:", err);
+      toast.error("Failed to filter assets");
+    } finally {
+      setIsFiltering(false);
+    }
+  }, [filters, currentPage, pageSize]);
+
   useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const data = await getRooms(0, 1000);
-        setRooms(data.content || []);
-      } catch (err) {
-        console.error("Error fetching rooms:", err);
+    if (filterTimeout) {
+      clearTimeout(filterTimeout);
+    }
+
+    const newTimeout = setTimeout(() => {
+      applyFilters();
+    }, 500);
+
+    setFilterTimeout(newTimeout);
+
+    return () => {
+      if (newTimeout) {
+        clearTimeout(newTimeout);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, applyFilters]);
 
-    fetchRooms();
-  }, []);
-
+  // Initial fetch when component mounts
   useEffect(() => {
-    const fetchAssets = async () => {
+    const fetchInitialAssets = async () => {
       try {
         setIsLoading(true);
-        let data;
-
-        if (selectedRoomId) {
-          const roomAssets = await getAssetsByRoomId(selectedRoomId);
-          data = { content: roomAssets, totalPages: 1 };
-        } else {
-          data = await getAssets(currentPage - 1, pageSize);
-        }
-
-        const filtered =
-          activeFilter === "All"
-            ? data.content
-            : data.content.filter(
-                (asset) => asset.condition === activeFilter.toUpperCase(),
-              );
-
-        const sorted = [...(filtered || [])].sort(
+        const data = await getAssets(currentPage - 1, pageSize);
+        const sorted = [...(data.content || [])].sort(
           (a, b) => (a.id || 0) - (b.id || 0),
         );
         setAssets(sorted);
@@ -103,8 +138,8 @@ function Assets() {
       }
     };
 
-    fetchAssets();
-  }, [currentPage, pageSize, activeFilter, selectedRoomId]);
+    fetchInitialAssets();
+  }, [currentPage, pageSize]);
 
   const handleAddAsset = async (newAsset) => {
     try {
@@ -200,15 +235,29 @@ function Assets() {
     }
   };
 
-  const handleFilterChange = (filter) => {
-    setActiveFilter(filter);
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
     setCurrentPage(1);
   };
 
-  const filteredAssets = assets.filter((asset) => {
-    if (activeFilter === "All") return true;
-    return asset.condition === activeFilter.toUpperCase();
-  });
+  const clearFilters = () => {
+    setFilters({
+      name: "",
+      category: "",
+      condition: "",
+      minCost: "",
+      maxCost: "",
+      purchaseDateFrom: "",
+      purchaseDateTo: "",
+      roomNumber: "",
+    });
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = Object.values(filters).some((value) => value !== "");
 
   const formatDate = (dateString) => {
     if (!dateString) return "_";
@@ -221,7 +270,6 @@ function Assets() {
   };
 
   const PER_PAGE = 10;
-  const pageAssets = assets;
 
   return (
     <>
@@ -232,12 +280,12 @@ function Assets() {
             Manage and track hotel assets and inventory.
           </p>
         </div>
-        <div className="col-span-2 flex items-center justify-end gap-2">
+        <div className="col-span-2 flex items-center justify-end gap-3">
           <Button
-            onClick={() => setShowRoomFilter((v) => !v)}
-            variation={showRoomFilter ? "primary" : "tertiary"}
+            onClick={() => setShowFilters(!showFilters)}
+            variation={showFilters ? "primary" : "tertiary"}
             className={`flex items-center gap-2 rounded-xl px-4 py-2 transition-all duration-300 ${
-              showRoomFilter ? "shadow-lg" : ""
+              showFilters ? "shadow-lg" : ""
             }`}
           >
             <FaFilter className="h-4 w-4" />
@@ -248,75 +296,201 @@ function Assets() {
               </span>
             )}
           </Button>
-
-          <div className="flex items-center gap-2 rounded-lg bg-gray-100 p-1">
-            <FilterButton
-              active={activeFilter === "All"}
-              onClick={() => handleFilterChange("All")}
-            >
-              All
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "Excellent"}
-              onClick={() => handleFilterChange("Excellent")}
-            >
-              Excellent
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "Good"}
-              onClick={() => handleFilterChange("Good")}
-            >
-              Good
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "Fair"}
-              onClick={() => handleFilterChange("Fair")}
-            >
-              Fair
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "Poor"}
-              onClick={() => handleFilterChange("Poor")}
-            >
-              Poor
-            </FilterButton>
-          </div>
           <Button
-            className="whitespace-nowrap"
+            onClick={() => {
+              console.log("Testing search with sample filters...");
+              const testFilters = {
+                name: "test",
+                category: "",
+                condition: "",
+                minCost: "",
+                maxCost: "",
+                purchaseDateFrom: "",
+                purchaseDateTo: "",
+                roomNumber: "",
+              };
+              searchAssets(testFilters, 0, 10)
+                .then((data) => {
+                  console.log("Test search result:", data);
+                })
+                .catch((err) => {
+                  console.error("Test search error:", err);
+                });
+            }}
+            variation="secondary"
+            className="mr-2 rounded-xl px-4 py-2"
+          >
+            Test Search
+          </Button>
+          <Button
             onClick={() => setIsModalOpen(true)}
+            variation="primary"
+            className="rounded-xl px-6 py-3 shadow-lg transition-all duration-300 hover:shadow-xl"
           >
             Add Asset
           </Button>
         </div>
       </div>
 
-      <div className="col-span-4 rounded-2xl bg-white p-6 shadow-md">
-        {/* Unified filter header like Rooms */}
-        {showRoomFilter && (
-          <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="col-span-4 rounded-2xl bg-white p-6">
+        {showFilters && (
+          <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FaSearch className="h-5 w-5 text-slate-400" />
+                <h3 className="text-lg font-semibold text-slate-800">
+                  Advanced Filters
+                </h3>
+                {isFiltering && (
+                  <div className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+                )}
+              </div>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="flex items-center gap-2 text-slate-500 transition-colors hover:text-red-500"
+                >
+                  <FaX className="h-4 w-4" />
+                  <span className="text-sm">Clear All</span>
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {/* Asset Name Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Filter by Room Number
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaTag className="text-slate-400" />
+                  Asset Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter asset name"
+                  value={filters.name}
+                  onChange={(e) => handleFilterChange("name", e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Category Filter */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaTag className="text-slate-400" />
+                  Category
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter category"
+                  value={filters.category}
+                  onChange={(e) =>
+                    handleFilterChange("category", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Condition Filter */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaTag className="text-slate-400" />
+                  Condition
+                </label>
+                <select
+                  value={filters.condition}
+                  onChange={(e) =>
+                    handleFilterChange("condition", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+                  <option value="">All conditions</option>
+                  {conditionOptions.map((condition) => (
+                    <option key={condition} value={condition}>
+                      {condition}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Room Number Filter */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaBed className="text-slate-400" />
+                  Room Number
                 </label>
                 <input
                   type="number"
-                  inputMode="numeric"
-                  min="1"
                   placeholder="Enter room number"
-                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (!value) {
-                      setSelectedRoomId("");
-                      return;
-                    }
-                    const num = Number(value);
-                    const matched = rooms.find(
-                      (r) => Number(r.roomNumber) === num,
-                    );
-                    setSelectedRoomId(matched ? String(matched.id) : "");
-                  }}
+                  value={filters.roomNumber}
+                  onChange={(e) =>
+                    handleFilterChange("roomNumber", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Min Cost Filter */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaDollarSign className="text-slate-400" />
+                  Min Cost
+                </label>
+                <input
+                  type="number"
+                  placeholder="Min cost"
+                  value={filters.minCost}
+                  onChange={(e) =>
+                    handleFilterChange("minCost", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Max Cost Filter */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaDollarSign className="text-slate-400" />
+                  Max Cost
+                </label>
+                <input
+                  type="number"
+                  placeholder="Max cost"
+                  value={filters.maxCost}
+                  onChange={(e) =>
+                    handleFilterChange("maxCost", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Purchase Date From */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaCalendarAlt className="text-slate-400" />
+                  Purchase Date From
+                </label>
+                <input
+                  type="date"
+                  value={filters.purchaseDateFrom}
+                  onChange={(e) =>
+                    handleFilterChange("purchaseDateFrom", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Purchase Date To */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                  <FaCalendarAlt className="text-slate-400" />
+                  Purchase Date To
+                </label>
+                <input
+                  type="date"
+                  value={filters.purchaseDateTo}
+                  onChange={(e) =>
+                    handleFilterChange("purchaseDateTo", e.target.value)
+                  }
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -363,18 +537,28 @@ function Assets() {
                     </div>
                   </td>
                 </tr>
-              ) : filteredAssets.length === 0 ? (
+              ) : assets.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="px-6 py-4">
                     <div className="flex flex-col items-center justify-center py-16">
                       <div className="text-lg font-semibold text-gray-400">
-                        No assets found with the selected filters.
+                        {hasActiveFilters
+                          ? "No assets match your current filter criteria."
+                          : "There are no assets available at the moment."}
                       </div>
+                      {hasActiveFilters && (
+                        <button
+                          onClick={clearFilters}
+                          className="mt-4 font-medium text-blue-500 hover:text-blue-600"
+                        >
+                          Clear all filters
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
               ) : (
-                pageAssets.map((asset) => (
+                assets.map((asset) => (
                   <tr key={asset.id}>
                     <td className="px-3 py-4 text-base font-medium whitespace-nowrap text-gray-900">
                       <div className="font-semibold">#{asset.id}</div>
