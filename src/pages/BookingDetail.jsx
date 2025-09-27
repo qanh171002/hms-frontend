@@ -1,25 +1,25 @@
+import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { FaArrowLeft } from "react-icons/fa";
 import {
-  HiOutlineUser,
-  HiOutlineHome,
   HiOutlineCalendar,
   HiOutlineChatBubbleLeftRight,
+  HiOutlineHome,
+  HiOutlineUser,
 } from "react-icons/hi2";
-import { FaSignInAlt, FaTimes, FaArrowLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
 import {
+  deleteBooking,
   getBookingById,
   updateBooking,
-  deleteBooking,
 } from "../apis/bookingsApi";
+import { getCountries } from "../apis/countriesApi";
 import { createInvoice, getInvoices } from "../apis/invoicesApi";
 import { updateRoom } from "../apis/roomsApi";
-import { getCountries } from "../apis/countriesApi";
-import Spinner from "../components/Spinner";
-import toast from "react-hot-toast";
 import Button from "../components/Button";
 import ConfirmModal from "../components/ConfirmModal";
 import InvoiceModal from "../components/InvoiceModal";
+import Spinner from "../components/Spinner";
 import SpinnerMini from "../components/SpinnerMini";
 
 const statusStyles = {
@@ -610,7 +610,6 @@ function BookingDetail() {
               disabled={isCheckingIn || isCancelling || isDeleting}
               className="flex items-center gap-2"
             >
-              <FaSignInAlt />
               {isCheckingIn ? <SpinnerMini /> : "Check in"}
             </Button>
             <Button
@@ -620,7 +619,6 @@ function BookingDetail() {
               disabled={isCheckingIn || isCancelling || isDeleting}
               className="flex items-center gap-2"
             >
-              <FaTimes />
               {isCancelling ? <SpinnerMini /> : "Cancel booking"}
             </Button>
           </>
