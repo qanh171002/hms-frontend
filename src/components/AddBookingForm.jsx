@@ -231,6 +231,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
               onChange={handleChange}
               className={inputClass}
               disabled={isSubmitting}
+              required
             >
               <option value="">Select country</option>
               {countries.map((c) => (
