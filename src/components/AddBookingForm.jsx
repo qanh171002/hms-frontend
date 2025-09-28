@@ -17,8 +17,8 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
     roomNumber: prefillData?.roomNumber || "",
     checkInDate: prefillData?.checkInDate || "",
     checkOutDate: prefillData?.checkOutDate || "",
-    actualCheckInTime: "",
-    actualCheckOutTime: "",
+    // actualCheckInTime: "",
+    // actualCheckOutTime: "",
     bookingType: "Daily",
     status: "Unconfirmed",
     numberOfGuests: prefillData?.numberOfGuests || "1",
@@ -132,14 +132,8 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
       checkOutDate: isHourly
         ? toISODateTime(formData.checkOutDate)
         : toISOJustBeforeNoon(formData.checkOutDate),
-      actualCheckInTime:
-        isHourly && formData.actualCheckInTime
-          ? toISODateTime(formData.actualCheckInTime)
-          : "",
-      actualCheckOutTime:
-        isHourly && formData.actualCheckOutTime
-          ? toISODateTime(formData.actualCheckOutTime)
-          : "",
+      // actualCheckInTime: "",
+      // actualCheckOutTime: "",
       bookingType: formData.bookingType,
       status: formData.status,
       numberOfGuests: parseInt(formData.numberOfGuests),
@@ -357,7 +351,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
           </div>
         </div>
 
-        {isHourly && (
+        {/* {isHourly && (
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -386,7 +380,7 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
               />
             </div>
           </div>
-        )}
+        )} */}
 
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-700">
