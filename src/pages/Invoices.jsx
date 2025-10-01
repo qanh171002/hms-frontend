@@ -43,6 +43,8 @@ function Invoices() {
   const [totalPages, setTotalPages] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [filters, setFilters] = useState({
     minAmount: "",
     maxAmount: "",
@@ -155,8 +157,6 @@ function Invoices() {
     setIsEditModalOpen(true);
   };
 
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
   const handleDeleteInvoice = async (id) => {
     setConfirmDeleteId(id);
   };
@@ -328,7 +328,9 @@ function Invoices() {
                 </label>
                 <select
                   value={filters.status}
-                  onChange={(e) => handleFilterChange("status", e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("status", e.target.value.toUpperCase())
+                  }
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">All statuses</option>

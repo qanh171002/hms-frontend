@@ -7,7 +7,7 @@ function EditInvoiceForm({ onSubmit, isSubmitting, onClose, invoice }) {
     bookingId: "",
     amount: "",
     paidAmount: "",
-    status: "Pending",
+    status: "",
     issuedDate: "",
     dueDate: "",
     paymentMethod: "",
@@ -46,7 +46,7 @@ function EditInvoiceForm({ onSubmit, isSubmitting, onClose, invoice }) {
         bookingId: invoice.bookingId || "",
         amount: invoice.amount || "",
         paidAmount: invoice.paidAmount || "",
-        status: invoice.status || "Pending",
+        status: (invoice.status || "").toUpperCase(),
         issuedDate: formatDateForInput(invoice.issuedDate),
         dueDate: formatDateForInput(invoice.dueDate),
         paymentMethod: invoice.paymentMethod || "",
@@ -143,8 +143,8 @@ function EditInvoiceForm({ onSubmit, isSubmitting, onClose, invoice }) {
               required
               disabled={isSubmitting}
             >
-              <option value="Pending">Pending</option>
-              <option value="Paid">Paid</option>
+              <option value="PENDING">Pending</option>
+              <option value="PAID">Paid</option>
             </select>
           </div>
         </div>

@@ -43,7 +43,7 @@ function InvoiceModal({ isOpen, onClose, invoiceId }) {
         paidAmount: data.paidAmount || "",
         dueDate: data.dueDate ? data.dueDate.split("T")[0] : "",
         paymentMethod: data.paymentMethod || "",
-        status: data.status || "",
+        status: (data.status || "").toUpperCase(),
       });
     } catch (error) {
       console.error("Error fetching invoice:", error);
@@ -103,7 +103,7 @@ function InvoiceModal({ isOpen, onClose, invoiceId }) {
       paidAmount: invoice.paidAmount || "",
       dueDate: invoice.dueDate ? invoice.dueDate.split("T")[0] : "",
       paymentMethod: invoice.paymentMethod || "",
-      status: invoice.status || "",
+      status: (invoice.status || "").toUpperCase(),
     });
   };
 

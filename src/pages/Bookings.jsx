@@ -448,12 +448,14 @@ function Bookings() {
                 </label>
                 <select
                   value={filters.status}
-                  onChange={(e) => handleFilterChange("status", e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange("status", e.target.value.toUpperCase())
+                  }
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">All statuses</option>
                   {statusOptions.map((status) => (
-                    <option key={status} value={status}>
+                    <option key={status} value={status.toUpperCase()}>
                       {status}
                     </option>
                   ))}
