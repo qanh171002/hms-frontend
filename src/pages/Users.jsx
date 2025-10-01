@@ -24,7 +24,7 @@ const roleStyles = {
 const FilterButton = ({ active, children, onClick }) => (
   <button
     onClick={onClick}
-    className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+    className={`flex-shrink-0 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
       active ? "bg-blue-500 text-white" : "text-gray-600 hover:text-gray-800"
     }`}
   >
@@ -190,15 +190,15 @@ function Users() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-6">
-        <div className="col-span-2 mb-6 flex flex-col justify-center">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="col-span-1 mb-6 flex flex-col justify-center md:col-span-2">
           <h2 className="text-2xl font-bold text-gray-800">Users</h2>
           <p className="text-base text-gray-500">
             Manage system users and their roles.
           </p>
         </div>
-        <div className="col-span-2 flex items-center justify-end gap-2">
-          <div className="flex items-center gap-2 rounded-lg bg-gray-100 p-1">
+        <div className="col-span-1 flex flex-col gap-2 md:col-span-2 md:flex-row md:items-center md:justify-between">
+          <div className="no-scrollbar -mx-1 flex w-full items-center gap-2 overflow-x-auto rounded-lg bg-gray-100 p-1 px-2">
             <FilterButton
               active={activeFilter === "All"}
               onClick={() => handleFilterChange("All")}
@@ -240,7 +240,7 @@ function Users() {
       </div>
 
       {/* Users Table */}
-      <div className="col-span-4 rounded-2xl bg-white p-6">
+      <div className="col-span-1 rounded-2xl bg-white p-6 md:col-span-4">
         <div className="rounded-lg bg-white shadow-md">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -335,7 +335,7 @@ function Users() {
           </div>
 
           <div className="flex items-center justify-between p-4">
-            <p className="text-sm text-gray-500">
+            <p className="hidden text-sm text-gray-500 md:block">
               Page {currentPage} of {totalPages}
             </p>
             <div className="flex items-center gap-2">
@@ -354,7 +354,7 @@ function Users() {
                 Next &gt;
               </button>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-4 md:flex">
               <label className="text-sm text-gray-600">Rows per page:</label>
               <select
                 value={pageSize}

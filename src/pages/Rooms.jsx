@@ -199,14 +199,14 @@ function Rooms() {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-6">
-      <div className="col-span-2 mb-6 flex flex-col justify-center">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+      <div className="col-span-1 mb-6 flex flex-col justify-center md:col-span-2">
         <h2 className="text-2xl font-bold text-gray-800">Room Management</h2>
         <p className="text-base text-gray-500">
           Manage and monitor hotel room status.
         </p>
       </div>
-      <div className="col-span-2 flex items-center justify-end gap-3">
+      <div className="col-span-1 flex items-center justify-end gap-3 md:col-span-2">
         <Button
           onClick={() => setShowFilters(!showFilters)}
           variation={showFilters ? "primary" : "tertiary"}
@@ -230,7 +230,7 @@ function Rooms() {
           Add Room
         </Button>
       </div>
-      <div className="col-span-4 rounded-2xl bg-white p-6">
+      <div className="col-span-1 rounded-2xl bg-white p-6 md:col-span-4">
         {showFilters && (
           <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
@@ -373,7 +373,7 @@ function Rooms() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {rooms.map((room) => (
                 <RoomCard
                   key={room.id}
@@ -384,7 +384,7 @@ function Rooms() {
               ))}
             </div>
             <div className="flex items-center justify-between p-4">
-              <p className="text-sm text-gray-500">
+              <p className="hidden text-sm text-gray-500 md:block">
                 Page {currentPage} of {totalPages}
               </p>
               <div className="flex items-center gap-2">
@@ -405,7 +405,7 @@ function Rooms() {
                   Next &gt;
                 </button>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="hidden items-center gap-4 md:flex">
                 <label className="text-sm text-gray-600">Rooms per page:</label>
                 <select
                   value={pageSize}

@@ -233,14 +233,14 @@ function Invoices() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-6">
-        <div className="col-span-2 mb-6 flex flex-col justify-center">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="col-span-1 mb-6 flex flex-col justify-center md:col-span-2">
           <h2 className="text-2xl font-bold text-gray-800">Invoices</h2>
           <p className="text-base text-gray-500">
             Manage hotel invoices and payments.
           </p>
         </div>
-        <div className="col-span-2 flex items-center justify-end gap-3">
+        <div className="col-span-1 flex items-center justify-end gap-3 md:col-span-2">
           <Button
             onClick={() => setShowFilters(!showFilters)}
             variation={showFilters ? "primary" : "tertiary"}
@@ -261,7 +261,7 @@ function Invoices() {
       </div>
 
       {/* Advanced Filters */}
-      <div className="col-span-4 rounded-2xl bg-white p-6">
+      <div className="col-span-1 rounded-2xl bg-white p-6 md:col-span-4">
         {showFilters && (
           <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
@@ -584,7 +584,7 @@ function Invoices() {
           </div>
 
           <div className="flex items-center justify-between p-4">
-            <p className="text-sm text-gray-500">
+            <p className="hidden text-sm text-gray-500 md:block">
               Page {currentPage} of {totalPages}
             </p>
             <div className="flex items-center gap-2">
@@ -605,7 +605,7 @@ function Invoices() {
                 Next &gt;
               </button>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-4 md:flex">
               <label className="text-sm text-gray-600">Rows per page:</label>
               <select
                 value={pageSize}

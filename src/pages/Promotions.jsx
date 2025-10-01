@@ -108,19 +108,19 @@ function Promotions() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-6">
-        <div className="col-span-2 mb-6 flex flex-col justify-center">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+        <div className="col-span-1 mb-6 flex flex-col justify-center md:col-span-2">
           <h2 className="text-2xl font-bold text-gray-800">Promotions</h2>
           <p className="text-base text-gray-500">
             Manage hotel promotions and discounts.
           </p>
         </div>
-        <div className="col-span-2 flex items-center justify-end gap-2">
+        <div className="col-span-1 flex items-center justify-end gap-2 md:col-span-2">
           <Button onClick={() => setIsModalOpen(true)}>Add Promotion</Button>
         </div>
       </div>
 
-      <div className="col-span-4 rounded-2xl bg-white p-6 shadow-md">
+      <div className="col-span-1 rounded-2xl bg-white p-6 shadow-md md:col-span-4">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -209,7 +209,7 @@ function Promotions() {
 
         {/* Pagination */}
         <div className="flex items-center justify-between p-4">
-          <p className="text-sm text-gray-500">
+          <p className="hidden text-sm text-gray-500 md:block">
             Page {currentPage} of {totalPages}
           </p>
           <div className="flex items-center gap-2">
@@ -228,7 +228,7 @@ function Promotions() {
               Next &gt;
             </button>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-4 md:flex">
             <label className="text-sm text-gray-600">Rows per page:</label>
             <select
               value={pageSize}

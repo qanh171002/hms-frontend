@@ -26,12 +26,16 @@ import BookingDetail from "./pages/BookingDetail";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import Promotions from "./pages/Promotions";
 
+import { useState } from "react";
+
 function AppLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       <div className="flex flex-1 flex-col overflow-auto bg-gray-50">
-        <Header />
+        <Header onToggleSidebar={() => setIsSidebarOpen((v) => !v)} />
         <main className="no-scrollbar overflow-scroll p-1 md:p-3 lg:p-4">
           <div className="max-w-10xl mx-auto flex flex-col gap-6 px-4 py-6 md:gap-8 md:px-10 md:py-8 lg:px-28">
             <Outlet />
