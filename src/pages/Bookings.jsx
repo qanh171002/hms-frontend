@@ -51,7 +51,7 @@ function Bookings() {
     guestFullName: "",
     guestIdNumber: "",
     guestNationality: "",
-    roomId: "",
+    roomNumber: "",
     checkInDateFrom: "",
     checkInDateTo: "",
     checkOutDateFrom: "",
@@ -189,7 +189,7 @@ function Bookings() {
       guestFullName: "",
       guestIdNumber: "",
       guestNationality: "",
-      roomId: "",
+      roomNumber: "",
       checkInDateFrom: "",
       checkInDateTo: "",
       checkOutDateFrom: "",
@@ -339,17 +339,19 @@ function Bookings() {
                 />
               </div>
 
-              {/* Room ID Filter */}
+              {/* Room Number Filter */}
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
                   <FaBed className="text-slate-400" />
-                  Room ID
+                  Room Number
                 </label>
                 <input
                   type="number"
-                  placeholder="Enter room ID"
-                  value={filters.roomId}
-                  onChange={(e) => handleFilterChange("roomId", e.target.value)}
+                  placeholder="Enter room number"
+                  value={filters.roomNumber}
+                  onChange={(e) =>
+                    handleFilterChange("roomNumber", e.target.value)
+                  }
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>

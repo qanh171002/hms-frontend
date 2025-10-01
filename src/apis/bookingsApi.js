@@ -100,8 +100,8 @@ export const filterBookings = async (filters, page = 0, size = 10) => {
     if (filters.guestNationality && filters.guestNationality !== "") {
       filterParams.guestNationality = filters.guestNationality;
     }
-    if (filters.roomId && String(filters.roomId).trim() !== "") {
-      filterParams.roomId = parseInt(filters.roomId);
+    if (filters.roomNumber && String(filters.roomNumber).trim() !== "") {
+      filterParams.roomId = parseInt(filters.roomNumber);
     }
 
     if (filters.checkInDateFrom && filters.checkInDateFrom !== "") {
