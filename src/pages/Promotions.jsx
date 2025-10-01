@@ -32,10 +32,7 @@ function Promotions() {
       try {
         setIsLoading(true);
         const data = await getPromotions(currentPage - 1, pageSize);
-        const sorted = [...(data.content || [])].sort(
-          (a, b) => (a.id || 0) - (b.id || 0),
-        );
-        setPromotions(sorted);
+        setPromotions(data.content || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("Error fetching promotions:", err);

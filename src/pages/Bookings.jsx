@@ -68,10 +68,7 @@ function Bookings() {
       try {
         setIsLoading(true);
         const data = await getBookings(currentPage - 1, pageSize);
-        const sorted = [...(data.content || [])].sort(
-          (a, b) => (a.id || 0) - (b.id || 0),
-        );
-        setBookings(sorted);
+        setBookings(data.content || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("Error fetching bookings:", err);
@@ -96,11 +93,8 @@ function Bookings() {
       } else {
         data = await getBookings(currentPage - 1, pageSize);
       }
-      const sorted = [...(data.content || [])].sort(
-        (a, b) => (a.id || 0) - (b.id || 0),
-      );
 
-      setBookings(sorted);
+      setBookings(data.content || []);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error("Error filtering bookings:", err);
@@ -133,11 +127,7 @@ function Bookings() {
     try {
       setIsSubmitting(true);
       const createdBooking = await createBooking(newBooking);
-      setBookings((prevBookings) =>
-        [...prevBookings, createdBooking].sort(
-          (a, b) => (a.id || 0) - (b.id || 0),
-        ),
-      );
+      setBookings((prevBookings) => [...prevBookings, createdBooking]);
       setIsModalOpen(false);
       toast.success("Booking added successfully!");
       return createdBooking;
@@ -174,9 +164,7 @@ function Bookings() {
       setIsDeleting(true);
       await deleteBooking(id);
       setBookings((prevBookings) =>
-        prevBookings
-          .filter((booking) => booking.id !== id)
-          .sort((a, b) => (a.id || 0) - (b.id || 0)),
+        prevBookings.filter((booking) => booking.id !== id),
       );
       toast.success("Booking deleted successfully!");
     } catch (err) {

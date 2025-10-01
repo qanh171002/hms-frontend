@@ -55,10 +55,7 @@ function Rooms() {
       try {
         setIsLoading(true);
         const data = await getRooms(currentPage - 1, pageSize);
-        const sorted = [...(data.content || [])].sort(
-          (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
-        );
-        setRooms(sorted);
+        setRooms(data.content || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("Error fetching rooms:", err);
@@ -83,11 +80,8 @@ function Rooms() {
       } else {
         data = await getRooms(currentPage - 1, pageSize);
       }
-      const sorted = [...(data.content || [])].sort(
-        (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
-      );
 
-      setRooms(sorted);
+      setRooms(data.content || []);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error("Error filtering rooms:", err);
@@ -120,11 +114,7 @@ function Rooms() {
     try {
       setIsSubmitting(true);
       const createdRoom = await createRoom(newRoom);
-      setRooms((prevRooms) =>
-        [...prevRooms, createdRoom].sort(
-          (a, b) => (a.roomNumber || 0) - (b.roomNumber || 0),
-        ),
-      );
+      setRooms((prevRooms) => [...prevRooms, createdRoom]);
       setIsModalOpen(false);
       toast.success("Room added successfully!");
     } catch (err) {

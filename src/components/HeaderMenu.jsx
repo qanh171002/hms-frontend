@@ -45,9 +45,9 @@ function HeaderMenu() {
           <HiOutlineUser className="text-xl" />
         </ButtonIcon>
 
-        <ButtonIcon className="rounded-xl p-3 text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-yellow-600">
+        {/* <ButtonIcon className="rounded-xl p-3 text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-yellow-600">
           <HiOutlineSun className="text-xl" />
-        </ButtonIcon>
+        </ButtonIcon> */}
 
         <ButtonIcon
           onClick={handleLogout}

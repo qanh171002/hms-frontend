@@ -61,10 +61,7 @@ function Invoices() {
       try {
         setIsLoading(true);
         const data = await getInvoices(currentPage - 1, pageSize);
-        const sorted = [...(data.content || [])].sort(
-          (a, b) => (a.id || 0) - (b.id || 0),
-        );
-        setInvoices(sorted);
+        setInvoices(data.content || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("Error fetching invoices:", err);
@@ -89,11 +86,8 @@ function Invoices() {
       } else {
         data = await getInvoices(currentPage - 1, pageSize);
       }
-      const sorted = [...(data.content || [])].sort(
-        (a, b) => (a.id || 0) - (b.id || 0),
-      );
 
-      setInvoices(sorted);
+      setInvoices(data.content || []);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error("Error filtering invoices:", err);
@@ -130,11 +124,9 @@ function Invoices() {
         updatedInvoice,
       );
       setInvoices((prevInvoices) =>
-        prevInvoices
-          .map((invoice) =>
-            invoice.id === editingInvoice.id ? editedInvoice : invoice,
-          )
-          .sort((a, b) => (a.id || 0) - (b.id || 0)),
+        prevInvoices.map((invoice) =>
+          invoice.id === editingInvoice.id ? editedInvoice : invoice,
+        ),
       );
       setIsEditModalOpen(false);
       setEditingInvoice(null);

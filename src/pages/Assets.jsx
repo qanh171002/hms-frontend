@@ -86,11 +86,7 @@ function Assets() {
 
       console.log("API response:", data);
 
-      const sorted = [...(data.content || [])].sort(
-        (a, b) => (a.id || 0) - (b.id || 0),
-      );
-
-      setAssets(sorted);
+      setAssets(data.content || []);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error("Error filtering assets:", err);
@@ -125,10 +121,7 @@ function Assets() {
       try {
         setIsLoading(true);
         const data = await getAssets(currentPage - 1, pageSize);
-        const sorted = [...(data.content || [])].sort(
-          (a, b) => (a.id || 0) - (b.id || 0),
-        );
-        setAssets(sorted);
+        setAssets(data.content || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
         console.error("Error fetching assets:", err);
@@ -145,9 +138,7 @@ function Assets() {
     try {
       setIsSubmitting(true);
       const createdAsset = await createAsset(newAsset);
-      setAssets((prevAssets) =>
-        [...prevAssets, createdAsset].sort((a, b) => (a.id || 0) - (b.id || 0)),
-      );
+      setAssets((prevAssets) => [...prevAssets, createdAsset]);
       setIsModalOpen(false);
       toast.success("Asset added successfully!");
     } catch (err) {
@@ -174,9 +165,9 @@ function Assets() {
       setIsSubmitting(true);
       const editedAsset = await updateAsset(editingAsset.id, updatedAsset);
       setAssets((prevAssets) =>
-        prevAssets
-          .map((asset) => (asset.id === editingAsset.id ? editedAsset : asset))
-          .sort((a, b) => (a.id || 0) - (b.id || 0)),
+        prevAssets.map((asset) =>
+          asset.id === editingAsset.id ? editedAsset : asset,
+        ),
       );
       setIsEditModalOpen(false);
       setEditingAsset(null);
