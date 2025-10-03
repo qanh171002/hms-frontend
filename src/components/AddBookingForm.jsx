@@ -101,7 +101,17 @@ function AddBookingForm({ onSubmit, onClose, isSubmitting, prefillData }) {
 
   const isHourly = formData.bookingType === "Hourly";
 
-  const toISODateTime = (v) => (v ? new Date(v).toISOString() : "");
+  const toISODateTime = (v) => {
+    if (!v) return "";
+    if (v.includes("Z") || v.includes("+") || v.includes("-")) {
+      return v;
+    }
+    if (v.endsWith(":00")) {
+      return v + ".000Z";
+    } else {
+      return v + ":00.000Z";
+    }
+  };
   const toISONoon = (v) => (v ? `${v}T12:00:00.000Z` : "");
   const toISOJustBeforeNoon = (v) => (v ? `${v}T11:59:59.000Z` : "");
 

@@ -207,14 +207,20 @@ function BookingDetail() {
     }
   };
 
-  const calculateNights = () => {
+  const calculateDuration = () => {
     if (!booking?.checkInDate || !booking?.checkOutDate) return 0;
     try {
       const checkIn = new Date(booking.checkInDate);
       const checkOut = new Date(booking.checkOutDate);
       const diffTime = Math.abs(checkOut - checkIn);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return diffDays;
+
+      if (booking.bookingType?.toUpperCase() === "HOURLY") {
+        const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+        return diffHours;
+      } else {
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays;
+      }
     } catch {
       return 0;
     }
@@ -444,7 +450,7 @@ function BookingDetail() {
     );
   }
 
-  const nights = calculateNights();
+  const duration = calculateDuration();
   const relative = booking.checkInDate
     ? formatRelative(booking.checkInDate, new Date())
     : "";
@@ -481,7 +487,7 @@ function BookingDetail() {
           <div className="flex items-center gap-2">
             <HiOutlineHome className="text-3xl" />
             <span className="text-lg font-semibold">
-              {nights}{" "}
+              {duration}{" "}
               {booking.bookingType?.toUpperCase() === "HOURLY"
                 ? "hours"
                 : "nights"}{" "}
