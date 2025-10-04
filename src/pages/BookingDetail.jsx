@@ -413,7 +413,7 @@ function BookingDetail() {
         toast.success("Booking deleted successfully!");
       }
 
-      navigate("/bookings");
+      navigate(-1);
     } catch (err) {
       console.error("Error deleting booking:", err);
 

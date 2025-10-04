@@ -23,6 +23,7 @@ import Spinner from "../components/Spinner";
 import AddAssetForm from "../components/AddAssetForm";
 import EditAssetForm from "../components/EditAssetForm";
 import { FaX } from "react-icons/fa6";
+import { usePaginationState } from "../hooks/usePaginationState";
 
 const conditionStyles = {
   GOOD: "bg-green-100 text-green-700",
@@ -34,6 +35,10 @@ const conditionStyles = {
 const conditionOptions = ["EXCELLENT", "GOOD", "FAIR", "POOR"];
 
 function Assets() {
+  const { currentPage, setCurrentPage, resetToFirstPage } = usePaginationState(
+    "page",
+    1,
+  );
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -48,7 +53,6 @@ function Assets() {
     purchaseDateTo: "",
     roomNumber: "",
   });
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -113,9 +117,8 @@ function Assets() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, applyFilters]);
+  }, [filters, currentPage, applyFilters]);
 
-  // Initial fetch when component mounts
   useEffect(() => {
     const fetchInitialAssets = async () => {
       try {
@@ -132,7 +135,7 @@ function Assets() {
     };
 
     fetchInitialAssets();
-  }, [currentPage, pageSize]);
+  }, [pageSize]); // Removed currentPage dependency
 
   const handleAddAsset = async (newAsset) => {
     try {
@@ -234,7 +237,7 @@ function Assets() {
       ...prev,
       [key]: value,
     }));
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const clearFilters = () => {
@@ -248,7 +251,7 @@ function Assets() {
       purchaseDateTo: "",
       roomNumber: "",
     });
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const hasActiveFilters = Object.values(filters).some((value) => value !== "");
@@ -614,7 +617,7 @@ function Assets() {
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
-                setCurrentPage(1);
+                resetToFirstPage();
               }}
               className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
             >

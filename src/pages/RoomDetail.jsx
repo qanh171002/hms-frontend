@@ -86,7 +86,7 @@ export default function RoomDetail() {
       setIsDeleting(true);
       await deleteRoom(id);
       toast.success("Delete room successfully!");
-      navigate("/rooms");
+      navigate(-1);
     } catch (err) {
       console.error("Error deleting room:", err);
 

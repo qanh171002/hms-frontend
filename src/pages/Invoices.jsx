@@ -22,6 +22,7 @@ import {
   FaBed,
 } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
+import { usePaginationState } from "../hooks/usePaginationState";
 
 const statusStyles = {
   PENDING: "bg-yellow-100 text-yellow-700",
@@ -33,9 +34,12 @@ const paymentMethods = ["Cash", "Credit Card", "Bank Transfer", "PayPal"];
 
 function Invoices() {
   const navigate = useNavigate();
+  const { currentPage, setCurrentPage, resetToFirstPage } = usePaginationState(
+    "page",
+    1,
+  );
   const [invoices, setInvoices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState(null);
@@ -58,6 +62,7 @@ function Invoices() {
   });
   const [filterTimeout, setFilterTimeout] = useState(null);
 
+  // Initial load effect - only runs when pageSize changes or on first mount
   useEffect(() => {
     const fetchInitialInvoices = async () => {
       try {
@@ -73,7 +78,7 @@ function Invoices() {
       }
     };
     fetchInitialInvoices();
-  }, [currentPage, pageSize]);
+  }, [pageSize]); // Removed currentPage dependency
 
   const applyFilters = useCallback(async () => {
     try {
@@ -99,6 +104,7 @@ function Invoices() {
     }
   }, [filters, currentPage, pageSize]);
 
+  // Handle page changes and filters
   useEffect(() => {
     if (filterTimeout) {
       clearTimeout(filterTimeout);
@@ -116,7 +122,7 @@ function Invoices() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, applyFilters]);
+  }, [filters, currentPage, applyFilters]); // Added currentPage dependency
 
   const handleEditInvoice = async (updatedInvoice) => {
     try {
@@ -195,7 +201,7 @@ function Invoices() {
       ...prev,
       [key]: value,
     }));
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const clearFilters = () => {
@@ -210,7 +216,7 @@ function Invoices() {
       paymentMethod: "",
       bookingId: "",
     });
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const hasActiveFilters = Object.values(filters).some((value) => value !== "");
@@ -550,7 +556,7 @@ function Invoices() {
                             className="rounded-full p-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/invoices/${invoice.id}`);
+                              navigate(`${invoice.id}`);
                             }}
                             title="View invoice details"
                           >
@@ -613,7 +619,7 @@ function Invoices() {
                 value={pageSize}
                 onChange={(e) => {
                   setPageSize(Number(e.target.value));
-                  setCurrentPage(1);
+                  resetToFirstPage();
                 }}
                 className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
               >

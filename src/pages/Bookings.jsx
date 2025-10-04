@@ -24,6 +24,7 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
+import { usePaginationState } from "../hooks/usePaginationState";
 
 const statusStyles = {
   "CHECKED IN": "bg-green-100 text-green-700",
@@ -37,11 +38,14 @@ const statusOptions = ["Checked in", "Checked out", "Unconfirmed", "Cancelled"];
 
 function Bookings() {
   const navigate = useNavigate();
+  const { currentPage, setCurrentPage, resetToFirstPage } = usePaginationState(
+    "page",
+    1,
+  );
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const pageBookings = bookings;
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -181,7 +185,7 @@ function Bookings() {
       ...prev,
       [key]: value,
     }));
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const clearFilters = () => {
@@ -199,7 +203,7 @@ function Bookings() {
       numberOfGuestsMin: "",
       numberOfGuestsMax: "",
     });
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const hasActiveFilters = Object.values(filters).some((value) => value !== "");
@@ -644,7 +648,7 @@ function Bookings() {
                             className="rounded-full p-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/bookings/${booking.id}`);
+                              navigate(`${booking.id}`);
                             }}
                             title="See details"
                           >

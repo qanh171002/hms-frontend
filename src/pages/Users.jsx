@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
 import AddUserForm from "../components/AddUserForm";
 import EditUserForm from "../components/EditUserForm";
+import { usePaginationState } from "../hooks/usePaginationState";
 
 const roleStyles = {
   ADMIN: "bg-red-100 text-red-700",
@@ -33,10 +34,13 @@ const FilterButton = ({ active, children, onClick }) => (
 );
 
 function Users() {
+  const { currentPage, setCurrentPage, resetToFirstPage } = usePaginationState(
+    "page",
+    1,
+  );
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,6 +48,7 @@ function Users() {
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  // Handle page changes and filters
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -163,7 +168,7 @@ function Users() {
 
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const filteredUsers = users.filter((user) => {
@@ -360,7 +365,7 @@ function Users() {
                 value={pageSize}
                 onChange={(e) => {
                   setPageSize(Number(e.target.value));
-                  setCurrentPage(1);
+                  resetToFirstPage();
                 }}
                 className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
               >

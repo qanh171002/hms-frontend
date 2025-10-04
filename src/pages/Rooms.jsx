@@ -24,11 +24,16 @@ import Modal from "../components/Modal";
 import AddRoomForm from "../components/AddRoomForm";
 import AddBookingForm from "../components/AddBookingForm";
 import { FaX } from "react-icons/fa6";
+import { usePaginationState } from "../hooks/usePaginationState";
 
 const roomTypes = ["Standard", "Deluxe", "Suite", "Executive"];
 const maxOccupancies = [1, 2, 3, 4];
 
 function Rooms() {
+  const { currentPage, setCurrentPage, resetToFirstPage } = usePaginationState(
+    "page",
+    1,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -44,7 +49,6 @@ function Rooms() {
     desiredCheckIn: "",
     desiredCheckOut: "",
   });
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(8);
 
@@ -178,7 +182,7 @@ function Rooms() {
       ...prev,
       [key]: value,
     }));
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const clearFilters = () => {
@@ -189,7 +193,7 @@ function Rooms() {
       desiredCheckIn: "",
       desiredCheckOut: "",
     });
-    setCurrentPage(1);
+    resetToFirstPage();
   };
 
   const hasActiveFilters = Object.values(filters).some((value) => value !== "");
@@ -411,7 +415,7 @@ function Rooms() {
                   value={pageSize}
                   onChange={(e) => {
                     setPageSize(Number(e.target.value));
-                    setCurrentPage(1);
+                    resetToFirstPage();
                   }}
                   className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
                 >
@@ -475,7 +479,7 @@ function RoomCard({ room, onBookRoom }) {
   };
 
   const handleCardClick = () => {
-    navigate(`/rooms/${room.id}`);
+    navigate(`${room.id}`);
   };
 
   return (

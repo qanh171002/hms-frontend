@@ -18,6 +18,7 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
+import { NotificationProvider } from "./contexts/NotificationContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleProtectedRoute from "./components/RoleProtectedRoute";
 import SmartRedirect from "./components/SmartRedirect";
@@ -52,141 +53,147 @@ function App() {
       <Toaster />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route
-              element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<SmartRedirect />} />
+          <NotificationProvider>
+            <Routes>
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <AppLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<SmartRedirect />} />
 
-              {/* Dashboard - Admin, Manager */}
-              <Route
-                path="/dashboard"
-                element={
-                  <RoleProtectedRoute
-                    allowedRoles={["ADMIN", "MANAGER", "ACCOUNTANT"]}
-                  >
-                    <Dashboard />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Dashboard - Admin, Manager */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <RoleProtectedRoute
+                      allowedRoles={["ADMIN", "MANAGER", "ACCOUNTANT"]}
+                    >
+                      <Dashboard />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* Rooms - Admin, Manager, Receptionist */}
-              <Route
-                path="/rooms"
-                element={
-                  <RoleProtectedRoute
-                    allowedRoles={["ADMIN", "MANAGER", "RECEPTIONIST"]}
-                  >
-                    <Rooms />
-                  </RoleProtectedRoute>
-                }
-              />
-              <Route
-                path="/rooms/:id"
-                element={
-                  <RoleProtectedRoute
-                    allowedRoles={["ADMIN", "MANAGER", "RECEPTIONIST"]}
-                  >
-                    <RoomDetail />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Rooms - Admin, Manager, Receptionist */}
+                <Route
+                  path="/rooms"
+                  element={
+                    <RoleProtectedRoute
+                      allowedRoles={["ADMIN", "MANAGER", "RECEPTIONIST"]}
+                    >
+                      <Rooms />
+                    </RoleProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rooms/:id"
+                  element={
+                    <RoleProtectedRoute
+                      allowedRoles={["ADMIN", "MANAGER", "RECEPTIONIST"]}
+                    >
+                      <RoomDetail />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* Bookings - Admin, Receptionist */}
-              <Route
-                path="/bookings"
-                element={
-                  <RoleProtectedRoute allowedRoles={["ADMIN", "RECEPTIONIST"]}>
-                    <Bookings />
-                  </RoleProtectedRoute>
-                }
-              />
-              <Route
-                path="/bookings/:id"
-                element={
-                  <RoleProtectedRoute allowedRoles={["ADMIN", "RECEPTIONIST"]}>
-                    <BookingDetail />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Bookings - Admin, Receptionist */}
+                <Route
+                  path="/bookings"
+                  element={
+                    <RoleProtectedRoute
+                      allowedRoles={["ADMIN", "RECEPTIONIST"]}
+                    >
+                      <Bookings />
+                    </RoleProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/bookings/:id"
+                  element={
+                    <RoleProtectedRoute
+                      allowedRoles={["ADMIN", "RECEPTIONIST"]}
+                    >
+                      <BookingDetail />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* Users - Admin, Manager */}
-              <Route
-                path="/users"
-                element={
-                  <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
-                    <Users />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Users - Admin, Manager */}
+                <Route
+                  path="/users"
+                  element={
+                    <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <Users />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* Profile - All roles */}
-              <Route path="/profile" element={<Profile />} />
+                {/* Profile - All roles */}
+                <Route path="/profile" element={<Profile />} />
 
-              {/* Settings - All roles (Admin can update, others read-only) */}
-              <Route
-                path="/settings"
-                element={
-                  <RoleProtectedRoute
-                    allowedRoles={[
-                      "ADMIN",
-                      "MANAGER",
-                      "RECEPTIONIST",
-                      "ACCOUNTANT",
-                    ]}
-                  >
-                    <Settings />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Settings - All roles (Admin can update, others read-only) */}
+                <Route
+                  path="/settings"
+                  element={
+                    <RoleProtectedRoute
+                      allowedRoles={[
+                        "ADMIN",
+                        "MANAGER",
+                        "RECEPTIONIST",
+                        "ACCOUNTANT",
+                      ]}
+                    >
+                      <Settings />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* Assets - Admin, Manager, Receptionist */}
-              <Route
-                path="/assets"
-                element={
-                  <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
-                    <Assets />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Assets - Admin, Manager, Receptionist */}
+                <Route
+                  path="/assets"
+                  element={
+                    <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <Assets />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* Invoices - Admin, Receptionist, Accountant */}
-              <Route
-                path="/invoices"
-                element={
-                  <RoleProtectedRoute allowedRoles={["ADMIN", "ACCOUNTANT"]}>
-                    <Invoices />
-                  </RoleProtectedRoute>
-                }
-              />
-              <Route
-                path="/invoices/:id"
-                element={
-                  <RoleProtectedRoute
-                    allowedRoles={["ADMIN", "RECEPTIONIST", "ACCOUNTANT"]}
-                  >
-                    <InvoiceDetail />
-                  </RoleProtectedRoute>
-                }
-              />
+                {/* Invoices - Admin, Receptionist, Accountant */}
+                <Route
+                  path="/invoices"
+                  element={
+                    <RoleProtectedRoute allowedRoles={["ADMIN", "ACCOUNTANT"]}>
+                      <Invoices />
+                    </RoleProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/invoices/:id"
+                  element={
+                    <RoleProtectedRoute
+                      allowedRoles={["ADMIN", "RECEPTIONIST", "ACCOUNTANT"]}
+                    >
+                      <InvoiceDetail />
+                    </RoleProtectedRoute>
+                  }
+                />
 
-              {/* Promotions - Admin, Manager */}
-              <Route
-                path="/promotions"
-                element={
-                  <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
-                    <Promotions />
-                  </RoleProtectedRoute>
-                }
-              />
-            </Route>
+                {/* Promotions - Admin, Manager */}
+                <Route
+                  path="/promotions"
+                  element={
+                    <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <Promotions />
+                    </RoleProtectedRoute>
+                  }
+                />
+              </Route>
 
-            <Route path="/login" element={<Login />} />
-          </Routes>
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </NotificationProvider>
         </AuthProvider>
       </BrowserRouter>
     </>

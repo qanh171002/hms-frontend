@@ -13,20 +13,25 @@ import EditPromotionForm from "../components/EditPromotionForm";
 import Spinner from "../components/Spinner";
 import Button from "../components/Button";
 import toast from "react-hot-toast";
+import { usePaginationState } from "../hooks/usePaginationState";
 
 function Promotions() {
+  const { currentPage, setCurrentPage, resetToFirstPage } = usePaginationState(
+    "page",
+    1,
+  );
   const [promotions, setPromotions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingPromotion, setEditingPromotion] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Handle page changes
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
@@ -234,7 +239,7 @@ function Promotions() {
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
-                setCurrentPage(1);
+                resetToFirstPage();
               }}
               className="rounded-md border px-2 py-1 text-sm text-gray-700"
             >

@@ -79,7 +79,7 @@ function Sidebar({ isOpen = false, setIsOpen = () => {} }) {
         onClick={() => setIsOpen(false)}
       />
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-xl transition-transform duration-200 md:relative md:z-10 md:w-48 md:shadow-lg lg:w-64 ${
+        className={`fixed inset-y-0 left-0 z-100 flex h-full w-64 flex-col border-r border-gray-200 bg-gradient-to-b from-white to-gray-50 shadow-xl transition-transform duration-200 md:relative md:z-10 md:w-48 md:shadow-lg lg:w-64 ${
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
