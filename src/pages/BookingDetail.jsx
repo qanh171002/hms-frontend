@@ -15,12 +15,15 @@ import {
 } from "../apis/bookingsApi";
 import { getCountries } from "../apis/countriesApi";
 import { createInvoice, getInvoices } from "../apis/invoicesApi";
+import { getExtraCharges } from "../apis/extraChargesApi";
+import { createBookingExtraCharge } from "../apis/bookingExtraChargesApi";
 import { updateRoom } from "../apis/roomsApi";
 import Button from "../components/Button";
 import ConfirmModal from "../components/ConfirmModal";
 import InvoiceModal from "../components/InvoiceModal";
 import Spinner from "../components/Spinner";
 import SpinnerMini from "../components/SpinnerMini";
+import Modal from "../components/Modal";
 
 const statusStyles = {
   "CHECKED IN": "bg-green-100 text-green-600",
@@ -47,6 +50,58 @@ function BookingDetail() {
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isExtraModalOpen, setIsExtraModalOpen] = useState(false);
+  const [extraCharges, setExtraCharges] = useState([]);
+  const [isLoadingExtras, setIsLoadingExtras] = useState(false);
+  const [selectedExtras, setSelectedExtras] = useState({});
+
+  const openExtraModal = async () => {
+    try {
+      setIsExtraModalOpen(true);
+      setIsLoadingExtras(true);
+      const data = await getExtraCharges(0, 1000);
+      const items = data?.content || data || [];
+      setExtraCharges(items);
+    } catch (e) {
+      console.error("Failed to load extra charges:", e);
+      toast.error("Failed to load extra charges");
+    } finally {
+      setIsLoadingExtras(false);
+    }
+  };
+
+  const toggleExtraSelection = (extra) => {
+    setSelectedExtras((prev) => {
+      const next = { ...prev };
+      if (next[extra.id]) {
+        delete next[extra.id];
+      } else {
+        next[extra.id] = {
+          quantity: 1,
+          note: "",
+          price: Number(extra.price) || 0,
+        };
+      }
+      return next;
+    });
+  };
+
+  const updateExtraQuantity = (id, quantity) => {
+    setSelectedExtras((prev) => ({
+      ...prev,
+      [id]: {
+        ...(prev[id] || { quantity: 0, note: "", price: 0 }),
+        quantity: Math.max(0, Number(quantity) || 0),
+      },
+    }));
+  };
+
+  const updateExtraNote = (id, note) => {
+    setSelectedExtras((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] || { quantity: 0, note: "", price: 0 }), note },
+    }));
+  };
 
   useEffect(() => {
     const fetchBookingData = async () => {
@@ -283,72 +338,80 @@ function BookingDetail() {
     }
   };
 
-  const handleCheckOut = async () => {
+  const performCheckout = async () => {
     if (!booking) return;
+    const now = new Date().toISOString();
+    const updatedBooking = {
+      ...booking,
+      status: "CHECKED OUT",
+      actualCheckOutTime: now,
+    };
 
+    await updateBooking(booking.id, updatedBooking);
+    setBooking(updatedBooking);
+
+    const roomId = booking.roomId;
+    if (roomId) {
+      await updateRoom(roomId, { status: "Available" });
+    }
+
+    const invoiceData = {
+      bookingId: booking.id,
+      amount: 0,
+      paidAmount: 0,
+      status: "PENDING",
+      issuedDate: now,
+      dueDate: "",
+      paymentMethod: "",
+      notes: "",
+    };
+
+    setIsCreatingInvoice(true);
+    setHasSearchedForInvoice(true);
+    const createdInvoice = await createInvoice(invoiceData);
+    if (createdInvoice?.id) {
+      setInvoiceId(createdInvoice.id);
+      toast.success(
+        `Check-out successful! Invoice #${createdInvoice.id} created!`,
+      );
+    } else {
+      toast.error("Invoice created but no ID returned");
+    }
+    setIsCreatingInvoice(false);
+  };
+
+  const submitExtrasThenCheckout = async () => {
+    if (!booking) return;
     try {
       setIsCheckingOut(true);
-      const now = new Date().toISOString();
-      const updatedBooking = {
-        ...booking,
-        status: "CHECKED OUT",
-        actualCheckOutTime: now,
-      };
+      // Submit selected extras
+      const payloads = Object.entries(selectedExtras)
+        .map(([extraId, v]) => ({ id: Number(extraId), ...v }))
+        .filter((x) => x.quantity > 0)
+        .map((x) => ({
+          bookingId: Number(booking.id),
+          extraChargeId: Number(x.id),
+          quantity: Number(x.quantity),
+          totalPrice: Number(x.price) * Number(x.quantity),
+          note: String(x.note || "").trim(),
+        }));
 
-      await updateBooking(booking.id, updatedBooking);
-      setBooking(updatedBooking);
-
-      const roomId = booking.roomId;
-      if (roomId) {
-        await updateRoom(roomId, { status: "Available" });
+      if (payloads.length > 0) {
+        await Promise.all(payloads.map((p) => createBookingExtraCharge(p)));
       }
 
-      const invoiceData = {
-        bookingId: booking.id,
-        amount: 0,
-        paidAmount: 0,
-        status: "PENDING",
-        issuedDate: now,
-        dueDate: "",
-        paymentMethod: "",
-        notes: "",
-      };
-
-      try {
-        setIsCreatingInvoice(true);
-        setHasSearchedForInvoice(true);
-        const createdInvoice = await createInvoice(invoiceData);
-        if (createdInvoice?.id) {
-          setInvoiceId(createdInvoice.id);
-          toast.success(
-            `Check-out successful! Invoice #${createdInvoice.id} created!`,
-          );
-        } else {
-          toast.error("Invoice created but no ID returned");
-        }
-      } catch (invoiceError) {
-        console.error("Error creating invoice:", invoiceError);
-        toast.error("Check-out successful but failed to create invoice");
-      } finally {
-        setIsCreatingInvoice(false);
-      }
+      await performCheckout();
+      setIsExtraModalOpen(false);
     } catch (err) {
-      console.error("Error checking out:", err);
-
-      let errorMessage = "Failed to check out!";
-
-      if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-
-      toast.error(errorMessage);
+      console.error("Error submitting extras/checkout:", err);
+      toast.error("Failed to submit extras or checkout");
     } finally {
       setIsCheckingOut(false);
     }
+  };
+
+  const handleCheckOut = () => {
+    openExtraModal();
   };
 
   const handleCancelBooking = async () => {
@@ -720,6 +783,123 @@ function BookingDetail() {
         onClose={() => setIsInvoiceModalOpen(false)}
         invoiceId={invoiceId}
       />
+
+      <Modal
+        isOpen={isExtraModalOpen}
+        onClose={() => setIsExtraModalOpen(false)}
+        size="2xl"
+      >
+        <div className="w-full max-w-[840px] overflow-hidden">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            Add extra charges before checkout
+          </h2>
+          {isLoadingExtras ? (
+            <div className="flex h-24 items-center justify-center">
+              <Spinner />
+            </div>
+          ) : (
+            <div className="max-h-[50vh] w-full overflow-x-auto overflow-y-auto rounded shadow-md">
+              <table className="w-full table-auto divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="w-16 px-4 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-500 uppercase">
+                      Select
+                    </th>
+                    <th className="min-w-40 px-4 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-500 uppercase">
+                      Name
+                    </th>
+                    <th className="w-24 px-4 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-500 uppercase">
+                      Type
+                    </th>
+                    <th className="w-20 px-4 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-500 uppercase">
+                      Price
+                    </th>
+                    <th className="w-20 px-4 py-3 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-500 uppercase">
+                      Qty
+                    </th>
+                    <th className="px-3 py-4 text-left text-xs font-medium tracking-wider whitespace-nowrap text-gray-500 uppercase">
+                      Note
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {extraCharges.map((ex) => {
+                    const sel = selectedExtras[ex.id];
+                    return (
+                      <tr key={ex.id}>
+                        <td className="px-3 py-4">
+                          <input
+                            type="checkbox"
+                            checked={!!sel}
+                            onChange={() => toggleExtraSelection(ex)}
+                          />
+                        </td>
+                        <td className="truncate px-3 py-4 text-sm text-gray-800">
+                          {ex.name}
+                        </td>
+                        <td className="truncate px-3 py-4 text-sm text-gray-700">
+                          {ex.type}
+                        </td>
+                        <td className="truncate px-3 py-4 text-sm text-gray-700">
+                          {ex.price}
+                        </td>
+                        <td className="px-3 py-4 text-sm text-gray-700">
+                          <input
+                            type="number"
+                            min="0"
+                            className="w-20 rounded-md border border-slate-300 px-2 py-1 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            value={sel?.quantity ?? 0}
+                            onChange={(e) =>
+                              updateExtraQuantity(ex.id, e.target.value)
+                            }
+                            disabled={!sel}
+                          />
+                        </td>
+                        <td className="px-3 py-4 text-sm text-gray-700">
+                          <input
+                            type="text"
+                            className="w-full min-w-0 rounded-md border border-slate-300 px-3 py-2 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            value={sel?.note ?? ""}
+                            onChange={(e) =>
+                              updateExtraNote(ex.id, e.target.value)
+                            }
+                            disabled={!sel}
+                            placeholder="Optional note"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {extraCharges.length === 0 && (
+                    <tr>
+                      <td
+                        className="px-4 py-6 text-center text-sm text-gray-500"
+                        colSpan={6}
+                      >
+                        No extra charges available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <div className="mt-4 flex justify-end gap-3">
+            <Button
+              variation="secondary"
+              onClick={() => setIsExtraModalOpen(false)}
+            >
+              Skip
+            </Button>
+            <Button
+              onClick={submitExtrasThenCheckout}
+              disabled={isCheckingOut || isLoadingExtras}
+            >
+              {isCheckingOut ? <SpinnerMini /> : "Confirm & checkout"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

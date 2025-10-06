@@ -26,6 +26,7 @@ import RoomDetail from "./pages/RoomDetail";
 import BookingDetail from "./pages/BookingDetail";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import Promotions from "./pages/Promotions";
+import ExtraCharges from "./pages/ExtraCharges";
 
 import { useState } from "react";
 
@@ -186,6 +187,16 @@ function App() {
                   element={
                     <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
                       <Promotions />
+                    </RoleProtectedRoute>
+                  }
+                />
+
+                {/* Extra Charges - Admin, Manager */}
+                <Route
+                  path="/extra-charges"
+                  element={
+                    <RoleProtectedRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <ExtraCharges />
                     </RoleProtectedRoute>
                   }
                 />

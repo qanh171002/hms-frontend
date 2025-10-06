@@ -6,6 +6,7 @@ import {
   HiOutlineHomeModern,
   HiOutlineInboxStack,
   HiOutlineUsers,
+  HiOutlinePlusCircle,
 } from "react-icons/hi2";
 import { NavLink } from "react-router-dom";
 import { Fragment } from "react";
@@ -56,6 +57,12 @@ function Sidebar({ isOpen = false, setIsOpen = () => {} }) {
       path: "/promotions",
       label: "Promotions",
       icon: HiOutlineCalendarDays,
+      roles: ["ADMIN", "MANAGER"],
+    },
+    {
+      path: "/extra-charges",
+      label: "Extra Charges",
+      icon: HiOutlinePlusCircle,
       roles: ["ADMIN", "MANAGER"],
     },
     {

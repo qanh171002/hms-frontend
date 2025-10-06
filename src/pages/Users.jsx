@@ -171,10 +171,7 @@ function Users() {
     resetToFirstPage();
   };
 
-  const filteredUsers = users.filter((user) => {
-    if (activeFilter === "All") return true;
-    return user.roles.includes(activeFilter);
-  });
+  const filteredUsers = users;
 
   const formatRoles = (roles) => {
     return roles.map((role) => (
@@ -202,45 +199,47 @@ function Users() {
             Manage system users and their roles.
           </p>
         </div>
-        <div className="col-span-1 flex flex-col gap-2 md:col-span-2 md:flex-row md:items-center md:justify-between">
-          <div className="no-scrollbar -mx-1 flex w-full items-center gap-2 overflow-x-auto rounded-lg bg-gray-100 p-1 px-2">
-            <FilterButton
-              active={activeFilter === "All"}
-              onClick={() => handleFilterChange("All")}
+        <div className="col-span-1 flex flex-col gap-2 md:col-span-2 md:flex-row md:items-center md:justify-end">
+          <div className="flex items-center gap-2">
+            <div className="no-scrollbar flex items-center gap-2 overflow-x-auto rounded-lg bg-gray-100 p-1">
+              <FilterButton
+                active={activeFilter === "All"}
+                onClick={() => handleFilterChange("All")}
+              >
+                All
+              </FilterButton>
+              <FilterButton
+                active={activeFilter === "ADMIN"}
+                onClick={() => handleFilterChange("ADMIN")}
+              >
+                Admin
+              </FilterButton>
+              <FilterButton
+                active={activeFilter === "MANAGER"}
+                onClick={() => handleFilterChange("MANAGER")}
+              >
+                Manager
+              </FilterButton>
+              <FilterButton
+                active={activeFilter === "RECEPTIONIST"}
+                onClick={() => handleFilterChange("RECEPTIONIST")}
+              >
+                Receptionist
+              </FilterButton>
+              <FilterButton
+                active={activeFilter === "ACCOUNTANT"}
+                onClick={() => handleFilterChange("ACCOUNTANT")}
+              >
+                Accountant
+              </FilterButton>
+            </div>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="whitespace-nowrap"
             >
-              All
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "ADMIN"}
-              onClick={() => handleFilterChange("ADMIN")}
-            >
-              Admin
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "MANAGER"}
-              onClick={() => handleFilterChange("MANAGER")}
-            >
-              Manager
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "RECEPTIONIST"}
-              onClick={() => handleFilterChange("RECEPTIONIST")}
-            >
-              Receptionist
-            </FilterButton>
-            <FilterButton
-              active={activeFilter === "ACCOUNTANT"}
-              onClick={() => handleFilterChange("ACCOUNTANT")}
-            >
-              Accountant
-            </FilterButton>
+              Add User
+            </Button>
           </div>
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            className="whitespace-nowrap"
-          >
-            Add User
-          </Button>
         </div>
       </div>
 

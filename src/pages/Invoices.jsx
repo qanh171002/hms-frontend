@@ -62,7 +62,6 @@ function Invoices() {
   });
   const [filterTimeout, setFilterTimeout] = useState(null);
 
-  // Initial load effect - only runs when pageSize changes or on first mount
   useEffect(() => {
     const fetchInitialInvoices = async () => {
       try {
@@ -78,7 +77,7 @@ function Invoices() {
       }
     };
     fetchInitialInvoices();
-  }, [pageSize]); // Removed currentPage dependency
+  }, [pageSize]);
 
   const applyFilters = useCallback(async () => {
     try {
@@ -104,7 +103,6 @@ function Invoices() {
     }
   }, [filters, currentPage, pageSize]);
 
-  // Handle page changes and filters
   useEffect(() => {
     if (filterTimeout) {
       clearTimeout(filterTimeout);
@@ -122,7 +120,7 @@ function Invoices() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, currentPage, applyFilters]); // Added currentPage dependency
+  }, [filters, currentPage, applyFilters]);
 
   const handleEditInvoice = async (updatedInvoice) => {
     try {

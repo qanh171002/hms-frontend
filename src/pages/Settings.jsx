@@ -13,6 +13,7 @@ import {
   FaSave,
   FaEdit,
   FaStackOverflow,
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 function Settings() {
@@ -24,6 +25,7 @@ function Settings() {
     email: "",
     taxCode: "",
     numberOfFloors: 1,
+    weekendSurchargePercent: 0,
   });
   const [originalHotelInfo, setOriginalHotelInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +39,13 @@ function Settings() {
       try {
         setIsLoading(true);
         const data = await getHotelInfo();
-        setHotelInfo(data);
+        setHotelInfo({
+          ...data,
+          weekendSurchargePercent:
+            typeof data.weekendSurchargePercent === "number"
+              ? data.weekendSurchargePercent
+              : Number(data.weekendSurchargePercent) || 0,
+        });
         setOriginalHotelInfo(data);
       } catch (err) {
         console.error("Error fetching hotel info:", err);
@@ -65,6 +73,10 @@ function Settings() {
         numberOfFloors: Math.max(
           1,
           Math.min(50, Number(hotelInfo.numberOfFloors) || 1),
+        ),
+        weekendSurchargePercent: Math.max(
+          0,
+          Math.min(100, Number(hotelInfo.weekendSurchargePercent) || 0),
         ),
       };
       const updated = await updateHotelInfo(payload);
@@ -279,6 +291,41 @@ function Settings() {
                 />
                 <p className="text-xs text-gray-500">
                   This determines the floor options in room creation form
+                </p>
+              </div>
+
+              {/* Weekend Surcharge Percent */}
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <FaCalendarAlt className="text-gray-400" />
+                  Weekend Surcharge (%)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={hotelInfo.weekendSurchargePercent}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "") {
+                      handleInputChange("weekendSurchargePercent", "");
+                    } else {
+                      const n = Math.max(0, Math.min(100, parseInt(v) || 0));
+                      handleInputChange("weekendSurchargePercent", n);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const v = e.target.value;
+                    const n = Math.max(0, Math.min(100, Number(v) || 0));
+                    handleInputChange("weekendSurchargePercent", n);
+                  }}
+                  disabled={!isEditing || !canUpdate}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
+                  placeholder="e.g., 10 for +10% on weekends"
+                />
+                <p className="text-xs text-gray-500">
+                  Applied automatically on weekend nights.
                 </p>
               </div>
             </div>

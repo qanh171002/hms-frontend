@@ -39,6 +39,8 @@ function Assets() {
     "page",
     1,
   );
+  const { currentPage: currentPageSize, setCurrentPage: setPageSize } =
+    usePaginationState("size", 10);
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -57,7 +59,7 @@ function Assets() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingAsset, setEditingAsset] = useState(null);
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = currentPageSize;
   const [totalPages, setTotalPages] = useState(1);
   const [filterTimeout, setFilterTimeout] = useState(null);
 
@@ -135,7 +137,7 @@ function Assets() {
     };
 
     fetchInitialAssets();
-  }, [pageSize]); // Removed currentPage dependency
+  }, [currentPage, pageSize]);
 
   const handleAddAsset = async (newAsset) => {
     try {

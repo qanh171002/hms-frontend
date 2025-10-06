@@ -1,5 +1,22 @@
-function Modal({ isOpen, onClose, children }) {
+function Modal({ isOpen, onClose, children, size = "md", className = "" }) {
   if (!isOpen) return null;
+
+  const sizeClass =
+    size === "sm"
+      ? "max-w-sm"
+      : size === "md"
+        ? "max-w-md"
+        : size === "lg"
+          ? "max-w-lg"
+          : size === "xl"
+            ? "max-w-2xl"
+            : size === "2xl"
+              ? "max-w-4xl"
+              : size === "full"
+                ? "max-w-[95vw]"
+                : typeof size === "string"
+                  ? size
+                  : "max-w-md";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -7,7 +24,9 @@ function Modal({ isOpen, onClose, children }) {
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
 
       {/* Modal content */}
-      <div className="relative z-50 mx-auto w-full max-w-md rounded-lg bg-white px-8 pt-6 pb-8 shadow-xl">
+      <div
+        className={`relative z-50 mx-auto w-full rounded-lg bg-white px-8 pt-6 pb-8 shadow-xl ${sizeClass} ${className}`}
+      >
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
